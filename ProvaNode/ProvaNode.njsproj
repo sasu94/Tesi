@@ -29,16 +29,49 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="login.js" />
+    <Compile Include="model\User.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="persistence\SampleDAO.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="persistence\UserDAO.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public\js\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public\js\jquery.min.js" />
     <Compile Include="server.js" />
+    <Compile Include="persistence\Connection.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Content Include="package.json" />
+    <Content Include="public\css\home.css">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\resources\dna.jpg" />
     <Content Include="README.md" />
     <Content Include="views\404.handlebars" />
     <Content Include="public\css\stile.css" />
     <Content Include="views\home.handlebars" />
     <Content Include="views\layouts\main.handlebars" />
+    <Content Include="views\login.handlebars">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="views\submit.handlebars">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="model\" />
+    <Folder Include="public\resources\" />
+    <Folder Include="uploads\" />
+    <Folder Include="persistence\" />
     <Folder Include="public\" />
+    <Folder Include="public\js\" />
+    <Folder Include="uploads\files\" />
+    <Folder Include="uploads\photos\" />
     <Folder Include="views\" />
     <Folder Include="views\layouts\" />
     <Folder Include="public\css\" />

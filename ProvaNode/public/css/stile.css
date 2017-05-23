@@ -1,3 +1,11 @@
 h1 {
 color:#FF0000;
 }
+
+section {
+    margin-top:50px;
+}
+
+.home {
+    background-image:url(../resources/dna.jpg)
+}

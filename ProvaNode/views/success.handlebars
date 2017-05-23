@@ -1,0 +1,16 @@
+﻿{{#section 'head'}}
+    <title>Submit</title>
+{{/section}}
+<section>
+     {{#if flash}}
+           <div class="alert alert-success">
+               {{{flash.message}}}
+           </div>
+             
+            <ul class="pager">
+              <li><a href="/submit">Submit a new file</a></li>
+            </ul>
+      {{/if}}
+
+
+</section>

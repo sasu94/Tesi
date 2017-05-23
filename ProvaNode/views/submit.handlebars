@@ -1,0 +1,60 @@
+﻿{{#section 'head'}}
+    <title>Submit</title>
+{{/section}}
+<section>
+    <div class="page-header">
+        <h1>Submit your file</h1>
+    </div>
+    <form class="form-horizontal" action="/submit" enctype="multipart/form-data" method="post" role="form">
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="name">Name</label>
+            <div class="col-lg-4">
+              <input id="name" name="name" type="text" class="form-control" required="">
+            </div>
+        </div>
+         <div class="form-group">
+            <label class="col-lg-2 control-label" for="subject">Subject</label>
+            <div class="col-lg-4">
+               <select name="subject" class="form-control" required>
+                   {{#each subject}}
+                        <option value="{{this.Id}}">{{this.Id}}</option>
+                   {{/each}}
+               </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="project">Project</label>
+            <div class="col-lg-4">
+               <select name="project" class="form-control" required>
+                   {{#each projects}}
+                        <option value="{{this.Id}}">{{this.Name}}</option>
+                   {{/each}}
+               </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="photo">Choose a photo</label>
+            <div class="col-lg-4">
+                <input id="photo" name="photo" type="file" class="form-control" required="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="file">Choose a csv file</label>
+            <div class="col-lg-4">
+                <input id="file" name="file" type="file" accept=".csv" class="form-control" required="">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </div>
+        {{#if flash}}
+           <div class="alert alert-dismissible alert-success">
+               {{{flash.message}}}
+           </div>
+      {{/if}}
+    </form>
+
+
+</section>
