@@ -1,28 +1,31 @@
 {{#section 'head'}}
 <script type="text/javascript" src="../js/index.js"></script>
-<link rel="stylesheet" type="text/css" href="/css/home.css"/>
+<link rel="stylesheet" type="text/css" href="/css/home.css" />
 {{/section}}
 
 <div class="site-wrapper">
-  <div class="site-wrapper-inner">
-    <div class="cover-container">
-      
-      <div class="inner cover">
-        <h1 class="cover-heading">Nome Sito</h1>
+    <div class="site-wrapper-inner">
+        <div class="cover-container">
 
-        <p class="lead">Descrizione breve</p>
+            <div class="inner cover">
+                <h1 class="cover-heading">Nome Sito</h1>
 
-        <p class="lead"><a class="btn btn-lg btn-info" href="/login">Login</a></p>
-      </div>
+                <p class="lead">Descrizione breve</p>
+                {{#unless user}}
+       
+                <p class="lead"><a class="btn btn-lg btn-info" href="/login">Login</a></p>
+                {{/unless}}
+     
+            </div>
 
-      <div class="mastfoot">
-        <div class="inner">
-          <!-- Validation -->
-          <p>&copy; 2017 Salvatore Monetti</p>
+            <div class="mastfoot">
+                <div class="inner">
+                    <!-- Validation -->
+                    <p>&copy; 2017 Salvatore Monetti</p>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-</div>
 </div>
 
 

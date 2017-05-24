@@ -9,3 +9,7 @@ section {
 .home {
     background-image:url(../resources/dna.jpg)
 }
+
+.disappear {
+    display:none;
+}

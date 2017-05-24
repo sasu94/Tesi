@@ -1,0 +1,54 @@
+﻿{{#section 'head'}}
+    <title>Your Projects</title>
+{{/section}}
+
+<section>
+    <div class="page-header">
+        <h1>Your Projects</h1>
+    </div>
+
+    {{#unless projects}}
+        <h1>You don't a any Project</h1>
+
+    {{else}}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th width="100px">Edit</th>
+                    <th width="100px">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each projects}}
+                <tr>
+                    <td>{{this.Name}}</td>
+                    <td><a href="#"><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td><a href="#"><span class="glyphicon glyphicon-remove"></span></a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    {{/unless}}
+    <form class="form-inline" action="/newProject" method="post" role="form">
+        <div class="form-group">
+            <label class="col-lg-6 control-label" for="name">New project name</label>
+            <div class="col-lg-6">
+                <input id="name" name="name" type="text" class="form-control" required="">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-group">
+                <div class="col-lg-10">
+                    <button type="submit" class="btn btn-default">Add</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+
+
+</section>

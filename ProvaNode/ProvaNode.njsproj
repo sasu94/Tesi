@@ -42,6 +42,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="public\js\jquery.min.js" />
+    <Compile Include="public\js\submit.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="server.js" />
     <Compile Include="persistence\Connection.js">
       <SubType>Code</SubType>
@@ -57,6 +60,9 @@
     <Content Include="views\home.handlebars" />
     <Content Include="views\layouts\main.handlebars" />
     <Content Include="views\login.handlebars">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="views\projects.handlebars">
       <SubType>Code</SubType>
     </Content>
     <Content Include="views\submit.handlebars">

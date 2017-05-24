@@ -73,12 +73,12 @@ app.get('/login', function (req, res) {
 
 app.get('/submit', function (req, res) {
     if (req.session.user == undefined) {
-        res.redirect(303,'/')
-    }else{
+        res.redirect(303, '/')
+    } else {
         var db = require('./persistence/SampleDAO');
         load = db.loadSubjects(function (subjects) {
             db.loadProj(req.session.user.id, function (projects) {
-                res.render('submit', { projects: projects,subject:subjects });
+                res.render('submit', { projects: projects, subject: subjects });
             });
         });
 
@@ -94,37 +94,75 @@ app.post('/submit', function (req, res) {
         var path = __dirname + '/uploads/';
         var db = require('./persistence/SampleDAO');
         var id;
-        var data = db.newFile(fields.name, fields.project, function(data){
+        var data = db.newFile(fields.name, fields.project, function (data) {
             fs.renameSync(file.path, path + "/files/" + data + ".csv");
             fs.renameSync(photo.path, path + "/photos/" + data + ".jpeg");
 
             var parser = parse({ delimiter: ',' }, function (err, split) {
                 if (err) throw err;
                 split.splice(0, 1);
-                count = 0;
-                total = split.length - 1;
 
-               for (var j = 0; j < split.length-1; j++) {
-                        for (var i = 0; i < split[j].length; i++) {
-                            if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
-                                split[j][i] = null;
-                        }
-                        count++
+                for (var j = 0; j < split.length; j++) {
+                    for (var i = 0; i < split[j].length; i++) {
+                        if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
+                            split[j][i] = null;
+                    }
+                    (function (index) {
                         db.newVariation(split[j], fields.subject, data);
-                }  
+                        if (index == split.length - 1) {
+                            req.session.flash = {
+                                message: 'Your file has been uploaded successfully'
+                            }
+                            res.redirect(303, '/submit');
+                        }
+                    })(j);
+                }
             });
             fs.createReadStream(path + '/files/' + data + '.csv').pipe(parser);
         });
 
-        req.session.flash = {
-            message: 'Your file has been uploaded successfully'
-        }
-        res.redirect(303, '/submit');
-        
-       
+
+
+
     });
 
 });
+
+app.get('/Projects', function (req, res) {
+    if (req.session.user == undefined) {
+        res.redirect(303, '/')
+    } else {
+        var db = require('./persistence/SampleDAO');
+
+        db.loadProj(req.session.user.id, function (projects) {
+            res.render('projects', { projects: projects });
+        });
+    }
+});
+
+app.post('/newProject', function (req, res) {
+    var db = require('./persistence/SampleDAO');
+
+    db.newProj(req.body.name, req.session.user.id, function () {
+        res.redirect(303, '/Projects');
+    });
+
+});
+
+app.post('/newProjectAJAX', function (req, res) {
+    var db = require('./persistence/SampleDAO');
+    var data = db.newProj(req.body.newProject, req.session.user.id, function (data) {
+        res.json(data);
+    });
+});
+
+app.post('/newSubject', function (req, res) {
+    var db = require('./persistence/SampleDAO');
+    var data = db.newSubject(req.body.newSubject, function (data) {
+        res.json(data);
+    });
+});
+
 
 
 app.post('/form', function (req, res) {
