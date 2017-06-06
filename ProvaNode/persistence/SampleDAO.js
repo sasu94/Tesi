@@ -2,18 +2,6 @@
 
 
 module.exports = {
-    newSubject: function (name, cb) {
-        connection.getConnection(function (err, conn) {
-            conn.query('insert into Subject (Id) values (?)', [name], function (error, results) {
-                if (error) cb(false);
-                else
-                    cb(results.insertId);
-            });
-        })
-
-
-    },
-
     loadSubjects: function (cb) {
         connection.getConnection(function (err, conn) {
             conn.query('select * from Subject', function (error, results) {
@@ -35,9 +23,23 @@ module.exports = {
     loadProj: function (id, cb) {
         connection.getConnection(function (err, conn) {
             conn.query('select * from Project where User=?', id, function (error, results) {
-                if (results.length >= 1) {
-                    cb(results);
-                }
+                cb(results);
+            });
+        })
+    },
+
+    removeProject(id) {
+        connection.getConnection(function (err, conn) {
+            conn.query('delete from Project where Id=?', id, function (error, results) {
+                if (error) throw error
+            });
+        })
+    },
+
+    loadSamples: function (id, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('select * from Sample where Project=?', id, function (error, results) {
+                cb(results);
             });
         })
     },

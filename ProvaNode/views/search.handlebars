@@ -1,0 +1,87 @@
+﻿{{#section 'head'}}
+    <title>Search</title>
+<link rel="stylesheet" type="text/css" href="/css/search.css" />
+<script type="text/javascript" src="/js/search.js"></script>
+{{/section}}
+<section>
+    <div class="page-header">
+        <h1>Search</h1>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <section>
+                <div class="wizard">
+
+                    <ul class="nav nav-wizard">
+
+                        <li class="active">
+                            <a href="#step1" data-toggle="tab">Q1</a>
+                        </li>
+
+                        <li class="disabled">
+                            <a href="#step2" data-toggle="tab">Q2</a>
+                        </li>
+
+                        <li class="disabled">
+                            <a href="#step3" data-toggle="tab">Q3</a>
+                        </li>
+
+                        <li class="disabled">
+                            <a href="#step4" data-toggle="tab">Q4</a>
+                        </li>
+                    </ul>
+
+
+                    <form>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="step1">
+                                <h3>Q1</h3>
+                                <p>This is step 1</p>
+                                <ul class="list-inline pull-right">
+                                    <li>
+                                        <button type="button" class="btn btn-primary cont">Continue</button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" id="step2">
+                                <h3>Q2</h3>
+                                <p>This is step 2</p>
+                                <ul class="list-inline pull-left">
+                                    <li>
+                                        <button type="button" class="btn btn-primary back">Back</button></li>
+                                </ul>
+                                <ul class="list-inline pull-right">
+                                    <li>
+                                        <button type="button" class="btn btn-primary cont">Continue</button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" id="step3">
+                                <h3>Q3</h3>
+                                <p>This is step 3</p>
+                                <ul class="list-inline pull-left">
+                                    <li>
+                                        <button type="button" class="btn btn-primary back">Back</button></li>
+                                </ul>
+                                <ul class="list-inline pull-right">
+                                    <li>
+                                        <button type="button" class="btn btn-primary cont">Continue</button></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" id="step4">
+                                <h3>Q4</h3>
+                                <p>You have successfully completed all steps.</p>
+                                <ul class="list-inline pull-left">
+                                    <li>
+                                        <button type="button" class="btn btn-primary back">Back</button></li>
+                                </ul>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</section>

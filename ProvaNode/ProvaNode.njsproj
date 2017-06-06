@@ -35,13 +35,25 @@
     <Compile Include="persistence\SampleDAO.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="persistence\SubjectDAO.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="persistence\UserDAO.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public\js\family.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="public\js\index.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="public\js\jquery.min.js" />
+    <Compile Include="public\js\projects.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public\js\search.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="public\js\submit.js">
       <SubType>Code</SubType>
     </Compile>
@@ -53,16 +65,34 @@
     <Content Include="public\css\home.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\css\search.css">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\resources\dna.jpg" />
     <Content Include="README.md" />
     <Content Include="views\404.handlebars" />
     <Content Include="public\css\stile.css" />
+    <Content Include="views\families.handlebars">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="views\home.handlebars" />
     <Content Include="views\layouts\main.handlebars" />
     <Content Include="views\login.handlebars">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="views\profile.handlebars">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="views\projects.handlebars">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="views\samples.handlebars">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="views\search.handlebars">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="views\subjects.handlebars">
       <SubType>Code</SubType>
     </Content>
     <Content Include="views\submit.handlebars">

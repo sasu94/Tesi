@@ -18,9 +18,12 @@
             <label class="col-lg-2 control-label" for="subject">Subject</label>
             <div class="col-lg-4">
                 <select name="subject" id="subjects" class="form-control" required>
-                    {{#each subject}}
-                        <option value="{{this.Id}}">{{this.Id}}</option>
+                    {{#if subject}}
+
+                        {{#each subject}}
+                            <option value="{{this.Id}}">{{this.Id}}</option>
                     {{/each}}
+                    {{/if}}
                 </select>
             </div>
             <div class="col-lg-4">
@@ -31,9 +34,11 @@
             <label class="col-lg-2 control-label" for="project">Project</label>
             <div class="col-lg-4">
                 <select name="project" id="projects" class="form-control" required>
-                    {{#each projects}}
-                        <option value="{{this.Id}}">{{this.Name}}</option>
+                    {{#if projects}}
+                        {{#each projects}}
+                            <option value="{{this.Id}}">{{this.Name}}</option>
                     {{/each}}
+                    {{/if}}
                 </select>
             </div>
             <div class="col-lg-4">
@@ -43,13 +48,13 @@
         <div class="form-group">
             <label class="col-lg-2 control-label" for="photo">Choose a photo</label>
             <div class="col-lg-4">
-                <input id="photo" name="photo" type="file" class="form-control" required="">
+                <input id="photo" name="photo" type="file" required="">
             </div>
         </div>
         <div class="form-group">
             <label class="col-lg-2 control-label" for="file">Choose a csv file</label>
             <div class="col-lg-4">
-                <input id="file" name="file" type="file" accept=".csv" class="form-control" required="">
+                <input id="file" name="file" type="file" accept=".csv" required="">
             </div>
         </div>
         <div class="form-group">
@@ -57,12 +62,16 @@
                 <button id="submit" type="submit" class="btn btn-default">Submit</button>
             </div>
         </div>
-        
+
         <div class="alert alert-info disappear">
-          Wait some minutes until your file is completely uploaded  <i class="fa fa-circle-o-notch fa-spin" style="font-size:24px"></i>
+            Wait some minutes until your file is completely uploaded  <i class="fa fa-circle-o-notch fa-spin" style="font-size: 24px"></i>
         </div>
         {{#if flash}}
            <div class="alert alert-dismissible alert-success">
+               <button type="button" class="close"
+                   data-dismiss="alert" aria-hidden="true">
+                   &times;
+               </button>
                {{{flash.message}}}
            </div>
         {{/if}}
@@ -76,12 +85,58 @@
                     <h4 class="modal-title" id="myModalLabel">Add a new Subject</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label" for="photo">Subject name</label>
-                        <div class="col-lg-8">
-                            <input id="subName" name="name" type="text" class="form-control" required="">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="name">Name</label>
+                            <div class="col-lg-8">
+                                <input id="Id" name="Id" type="text" class="form-control" required="">
+                            </div>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="protocolNumber">Protocol Number</label>
+                            <div class="col-lg-8">
+                                <input id="protocolNumber" name="ProtocolNumber" type="text" class="form-control" required="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="status">Status</label>
+                            <div class="col-lg-8">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="Status" value="Affected" checked>Affected</label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="Status" value="Not Affected">Not Affected</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="status">Sex</label>
+                            <div class="col-lg-8">
+                                <input id="sex" name="Sex" type="text" class="form-control" required="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="status">Age</label>
+                            <div class="col-lg-8">
+                                <input id="age" name="Age" type="text" class="form-control" required="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="status">Age of Onset</label>
+                            <div class="col-lg-8">
+                                <input id="ageOfOnset" name="AgeOfOnset" type="text" class="form-control" required="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="family">Family name</label>
+                            <div class="col-lg-8">
+                                <select id="famName" name="family" class="form-control" required="">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
 
                 </div>
                 <div class="modal-footer">
@@ -101,13 +156,14 @@
                     <h4 class="modal-title">Add a new Project</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="col-lg-4 control-label" for="photo">Project name</label>
-                        <div class="col-lg-8">
-                            <input id="projName" name="name" type="text" class="form-control" required="">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="photo">Project name</label>
+                            <div class="col-lg-8">
+                                <input id="projName" name="name" type="text" class="form-control" required="">
+                            </div>
                         </div>
-                    </div>
-
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close </button>

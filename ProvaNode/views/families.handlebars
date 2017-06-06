@@ -1,0 +1,55 @@
+﻿{{#section 'head'}}
+    <title>Families</title>
+<script type="text/javascript" src="../js/family.js"></script>
+{{/section}}
+
+
+<section>
+    <div class="page-header">
+        <h1>Families</h1>
+    </div>
+
+
+    {{#unless families}}
+        <h1>There aren't families</h1>
+
+    {{else}}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th class="shortColumn">Edit</th>
+                        <th class="shortColumn">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each families}}
+                    <tr>
+                        <td>{{this.Name}}</td>
+                        <td><a href="/subjects?id={{this.Name}}"><span class="glyphicon glyphicon-edit"></span></a></td>
+                        <td><a class="remove" href="#" on="{{this.Name}}"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    
+    {{/unless}}
+
+    <form class="form-inline" id="formFam" action="/subjects?action=newFamily" method="post" role="form">
+        <div class="form-group">
+            <label class="col-lg-6 control-label" for="name">New Family</label>
+            <div class="col-lg-6">
+                <input id="name" name="name" type="text" class="form-control" required="">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-group">
+                <div class="col-lg-10">
+                    <button type="submit" id="newFamily" class="btn btn-default">Add</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>

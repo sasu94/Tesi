@@ -1,0 +1,52 @@
+﻿{{#section 'head'}}
+    <title>Your Projects</title>
+<script>
+    $(document).ready(function () {
+        $('a[data-toggle="tooltip"]').tooltip({
+            animated: 'fade',
+            placement: 'bottom',
+            html: true
+        });
+    });
+
+</script>
+{{/section}}
+
+<section>
+    <div class="page-header">
+        <h1>{{project.Name}} samples</h1>
+    </div>
+
+    {{#unless samples}}
+    <h1>There aren't samples for this project</h1>
+    {{else}}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="shortColumn"></th>
+                    <th>Name</th>
+                    <th class="shortColumn">Remove</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each samples}}
+                <tr>
+                    <td>
+                        <a data-toggle="tooltip" title="<img src='/photos/{{this.Id}}.jpeg' />">
+                            <img class="pic" src="/photos/{{this.Id}}.jpeg" />
+                        </a>
+                    </td>
+                    <td>{{this.Name}}</td>
+                    <td><a href="#"><span class="glyphicon glyphicon-remove"></span></a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    {{/unless}}
+
+    <a href="/submit"><input type="submit" class="btn btn-default" value="New sample"/></a>
+
+
+</section>

@@ -17,5 +17,16 @@ module.exports = {
                 }
             });
         })
+    },
+
+    getUser: function (user, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('select * from user inner join laboratory on user.Laboratory=laboratory.Id where user.id=?', [user], function (error, results) {
+                if (error) throw error;
+                if (results.length == 1) {
+                    cb(results)
+                }
+            });
+        })
     }
 };

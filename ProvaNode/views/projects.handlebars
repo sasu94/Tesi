@@ -1,5 +1,6 @@
 ﻿{{#section 'head'}}
     <title>Your Projects</title>
+    <script type="text/javascript" src="/js/projects.js"></script>
 {{/section}}
 
 <section>
@@ -8,7 +9,7 @@
     </div>
 
     {{#unless projects}}
-        <h1>You don't a any Project</h1>
+        <h1>You don't have any Project</h1>
 
     {{else}}
     <div class="table-responsive">
@@ -16,16 +17,16 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th width="100px">Edit</th>
-                    <th width="100px">Delete</th>
+                    <th class="shortColumn">Edit</th>
+                    <th class="shortColumn">Delete</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each projects}}
                 <tr>
                     <td>{{this.Name}}</td>
-                    <td><a href="#"><span class="glyphicon glyphicon-edit"></span></a></td>
-                    <td><a href="#"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    <td><a href="/samples?id={{this.Id}}"><span class="glyphicon glyphicon-edit"></span></a></td>
+                    <td><a class="remove" href="#" on="{{this.Id}}"><span class="glyphicon glyphicon-remove"></span></a></td>
                 </tr>
                 {{/each}}
             </tbody>

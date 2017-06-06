@@ -1,0 +1,104 @@
+﻿{{#section 'head'}}
+    <title>Subjects</title>
+<script type="text/javascript" src="../js/family.js"></script>
+{{/section}}
+
+
+<section>
+    <div class="page-header">
+        <h1>Subjects</h1>
+    </div>
+
+
+    {{#unless subjects}}
+        <h1>There aren't Subject for this family</h1>
+
+    {{else}}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Protocol #</th>
+                        <th>Status</th>
+                        <th>Sex</th>
+                        <th>Age</th>
+                        <th>Age of Onset</th>
+                        <th class="shortColumn">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each subjects}}
+                    <tr>
+                        <td>{{this.Id}}</td>
+                        <td>{{this.ProtocolNumber}}</td>
+                        <td>{{this.Status}}</td>
+                        <td>{{this.Sex}}</td>
+                        <td>{{this.Age}}</td>
+                        <td>{{this.AgeOfOnset}}</td>
+                        <td><a class="remove" href="#" on="{{this.Id}}"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+    {{/unless}}
+
+    <form class="form-horizontal" id="formSub" action="/subjects?action=newSubject" method="post" role="form">
+        <div class="form-group">
+            <h3 class="col-lg-offset-2">New subject</h3>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="name">Name</label>
+            <div class="col-lg-4">
+                <input id="Id" name="Id" type="text" class="form-control" required="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="protocolNumber">Protocol Number</label>
+            <div class="col-lg-4">
+                <input id="protocolNumber" name="ProtocolNumber" type="text" class="form-control" required="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Status</label>
+            <div class="col-lg-4">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Affected" checked>Affected</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Not Affected">Not Affected</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Sex</label>
+            <div class="col-lg-4">
+                <input id="sex" name="Sex" type="text" class="form-control" required="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Age</label>
+            <div class="col-lg-4">
+                <input id="age" name="Age" type="text" class="form-control" required="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Age of Onset</label>
+            <div class="col-lg-4">
+                <input id="ageOfOnset" name="AgeOfOnset" type="text" class="form-control" required="">
+            </div>
+        </div>
+        <input type="hidden" name="Family" value="{{family}}" />
+        <div class="form-group">
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <button type="submit" id="newSubject" class="btn btn-default">Add</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>

@@ -25,6 +25,22 @@
 
     $('#newSub').click(function (e) {
         e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "/subjects",
+            datatype: "json",
+            data: {
+                loadFamilies: name,
+            },
+            success: function (data) {
+                data.forEach(function (element) {
+                    $('#famName').append('<option value=' + element.Name + '>' + element.Name + '</option>');
+                });
+            },
+            fail: function () {
+                alert('niente');
+            }
+        })
         $('#subModal').modal({ keyboard: true })
     });
 
@@ -35,26 +51,39 @@
 
 
     $('#newSubject').click(function () {
-        var name = $('#subName').val();
-        $.ajax({
-            type: "POST",
-            url: "/newSubject",
-            datatype: "json",
-            data: {
-                newSubject: name,
-            },
-            success: function (data) {
-                if (data === false)
-                    alert('Subject already in the Database');
-                else {
-                    $('#subjects').append('<option value=' + name + '>' + name + '</option>');
-                    $('#subModal').modal('toggle');
+        if ($('#Id').val() != '' && $('#protocolNumber').val() != '' && $('#sex').val() != '' && $('#age').val() != '' && $('#ageOfOnset').val() != '' && $('#famName').val() != '') {
+            var name = $('#Id').val();
+            $.ajax({
+                type: "POST",
+                url: "/subjects",
+                datatype: "json",
+                data: {
+                    newSubject: name,
+                    ProtocolNumber: $('#protocolNumber').val(),
+                    Status: $('input[name=Status]:checked').val(),
+                    Sex: $('#sex').val(),
+                    Age: $('#age').val(),
+                    AgeOfOnset: $('#ageOfOnset').val(),
+                    Family: $('#famName').val(),
+                },
+                success: function (data) {
+                    if (data === false)
+                        alert('Subject already in the Database');
+                    else {
+                        $('#subjects').append('<option value=' + name + '>' + name + '</option>');
+                        $('#subModal').modal('toggle');
+                    }
+                },
+                fail: function () {
+                    alert('niente');
                 }
-            },
-            fail: function () {
-                alert('niente');
-            }
-        })
+
+            })
+        }
+        else {
+            alert('please, fill every field');
+
+        }
     });
 
     $('#newProject').click(function () {

@@ -8,6 +8,7 @@ var parse = require('csv-parse');
 var app = express();
 
 app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/uploads'));
 
 
 app.use(require('express-session')({
@@ -75,8 +76,9 @@ app.get('/submit', function (req, res) {
     if (req.session.user == undefined) {
         res.redirect(303, '/')
     } else {
+        var db1 = require('./persistence/SubjectDAO');
         var db = require('./persistence/SampleDAO');
-        load = db.loadSubjects(function (subjects) {
+        load = db1.loadAllSubjects(function (subjects) {
             db.loadProj(req.session.user.id, function (projects) {
                 res.render('submit', { projects: projects, subject: subjects });
             });
@@ -128,23 +130,134 @@ app.post('/submit', function (req, res) {
 
 });
 
-app.get('/Projects', function (req, res) {
+app.get('/subjects', function (req, res) {
+    if (req.session.user == undefined) {
+        res.redirect(303, '/')
+    } else {
+        if (req.query.id != undefined) {
+            var db = require('./persistence/SubjectDAO');
+            var id = req.query.id;
+            db.loadSubjects(id, function (subjects) {
+                res.render('subjects', { subjects: subjects, family: req.query.id });
+            });
+
+
+        } else {
+            var db = require('./persistence/SubjectDAO');
+
+            db.loadFamilies(function (families) {
+                res.render('families', { families: families });
+            });
+        }
+
+    }
+
+
+});
+
+app.post('/subjects', function (req, res) {
+    if (req.query.action == 'newFamily') {
+        var db = require('./persistence/SubjectDAO');
+        db.newFamily(req.body.name, function () {
+            res.redirect(303, '/subjects');
+
+        });
+
+    } else if (req.query.action == 'newSubject') {
+        var db = require('./persistence/SubjectDAO');
+        db.newSubject(req.body.Id, req.body.ProtocolNumber, req.body.Status, req.body.Sex, req.body.Age, req.body.AgeOfOnset, req.body.Family, function () {
+            res.redirect(303, '/subjects?id=' + req.body.Family);
+
+        });
+    } else if (req.body.checkFamily != undefined) {
+        var db = require('./persistence/SubjectDAO');
+        db.checkFamily(req.body.checkFamily, function (data) {
+            res.json(data);
+
+        });
+    } else if (req.body.checkSubject != undefined) {
+        var db = require('./persistence/SubjectDAO');
+        db.checkSubject(req.body.checkSubject, function (data) {
+            res.json(data);
+        });
+
+    } else if (req.body.newSubject != undefined) {
+        var db = require('./persistence/SubjectDAO');
+        var data = db.newSubject(req.body.newSubject, req.body.ProtocolNumber, req.body.Status, req.body.Sex, req.body.Age, req.body.AgeOfOnset, req.body.Family, function (data) {
+            res.json(data);
+        });
+
+    } else if (req.body.loadFamilies != undefined) {
+        var db = require('./persistence/SubjectDAO');
+
+        db.loadFamilies(function (families) {
+            res.json(families);
+        });
+    }
+});
+
+app.get('/projects', function (req, res) {
     if (req.session.user == undefined) {
         res.redirect(303, '/')
     } else {
         var db = require('./persistence/SampleDAO');
 
         db.loadProj(req.session.user.id, function (projects) {
+            req.session.projects = projects;
             res.render('projects', { projects: projects });
         });
     }
+});
+
+app.post('/projects', function (req, res) {
+    if (req.body.remove != undefined) {
+        var db = require('./persistence/SampleDAO');
+        db.removeProject(req.body.remove);
+    }
+});
+
+app.get('/samples', function (req, res) {
+    if (req.session.user == undefined) {
+        res.redirect(303, '/')
+    } else {
+        var db = require('./persistence/SampleDAO');
+
+        db.loadSamples(req.query.id, function (samples) {
+            var project;
+            req.session.projects.forEach(function (element) {
+                if (element.Id == req.query.id)
+                    project = element;
+            });
+            res.render('samples', { samples: samples, project: project });
+        });
+    }
+});
+
+app.get('/profile', function (req, res) {
+    if (req.session.user == undefined) {
+        res.redirect(303, '/')
+    } else {
+        var db = require('./persistence/UserDAO');
+        db.getUser(req.session.user.id, function (data) {
+            res.render('profile', { user: data[0] });
+        })
+    }
+});
+
+app.get('/search', function (req, res) {
+    if (req.session.user == undefined) {
+        res.redirect(303, '/')
+    } else {
+        res.render('search');
+    }
+
 });
 
 app.post('/newProject', function (req, res) {
     var db = require('./persistence/SampleDAO');
 
     db.newProj(req.body.name, req.session.user.id, function () {
-        res.redirect(303, '/Projects');
+        res.redirect(303, '/projects');
     });
 
 });
@@ -157,10 +270,7 @@ app.post('/newProjectAJAX', function (req, res) {
 });
 
 app.post('/newSubject', function (req, res) {
-    var db = require('./persistence/SampleDAO');
-    var data = db.newSubject(req.body.newSubject, function (data) {
-        res.json(data);
-    });
+
 });
 
 

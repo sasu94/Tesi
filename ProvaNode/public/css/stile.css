@@ -13,3 +13,13 @@ section {
 .disappear {
     display:none;
 }
+
+.shortColumn{
+    width:100px;
+}
+
+.pic{
+    width:100px;
+    object-fit:cover;
+
+}

@@ -1,0 +1,36 @@
+﻿$(document).ready(function () {
+
+    //Wizard
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+
+        var $target = $(e.target);
+
+        if ($target.parent().hasClass('disabled')) {
+            return false;
+        }
+    });
+
+    $(".cont").click(function (e) {
+
+        var $active = $('.wizard .nav-wizard li.active');
+        $active.next().removeClass('disabled');
+        nextTab($active);
+
+    });
+
+    $(".back").click(function (e) {
+
+        var $active = $('.wizard .nav-wizard li.active');
+        $active.next().removeClass('disabled');
+        prevTab($active);
+
+    });
+});
+
+function nextTab(elem) {
+    $(elem).next().find('a[data-toggle="tab"]').click();
+}
+
+function prevTab(elem) {
+    $(elem).prev().find('a[data-toggle="tab"]').click();
+}
