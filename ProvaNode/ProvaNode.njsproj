@@ -35,6 +35,9 @@
     <Compile Include="persistence\SampleDAO.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="persistence\SearchDAO.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="persistence\SubjectDAO.js">
       <SubType>Code</SubType>
     </Compile>
@@ -48,6 +51,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="public\js\jquery.min.js" />
+    <Compile Include="public\js\profile.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="public\js\projects.js">
       <SubType>Code</SubType>
     </Compile>
@@ -96,6 +102,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="views\submit.handlebars">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="views\variation.handlebars">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>

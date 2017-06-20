@@ -51,7 +51,7 @@
 
 
     $('#newSubject').click(function () {
-        if ($('#Id').val() != '' && $('#protocolNumber').val() != '' && $('#sex').val() != '' && $('#age').val() != '' && $('#ageOfOnset').val() != '' && $('#famName').val() != '') {
+        if ($('#Id').val() != '' && $('#protocolNumber').val() != '' && $('#age').val() != '' && $('#ageOfOnset').val() != '' && $('#famName').val() != '') {
             var name = $('#Id').val();
             $.ajax({
                 type: "POST",
@@ -61,7 +61,7 @@
                     newSubject: name,
                     ProtocolNumber: $('#protocolNumber').val(),
                     Status: $('input[name=Status]:checked').val(),
-                    Sex: $('#sex').val(),
+                    Sex: $('input[name=Sex]:checked').val(),
                     Age: $('#age').val(),
                     AgeOfOnset: $('#ageOfOnset').val(),
                     Family: $('#famName').val(),
@@ -109,5 +109,12 @@
 
 
 
+    });
+
+    $('input[name=Status]').change(function () {
+        if ($(this).val() == 'Not Affected')
+            $("#ageOfOnset").prop('disabled', true);
+        else
+            $("#ageOfOnset").prop('disabled', false);
     });
 });

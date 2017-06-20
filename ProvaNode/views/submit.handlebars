@@ -19,10 +19,9 @@
             <div class="col-lg-4">
                 <select name="subject" id="subjects" class="form-control" required>
                     {{#if subject}}
-
                         {{#each subject}}
                             <option value="{{this.Id}}">{{this.Id}}</option>
-                    {{/each}}
+                        {{/each}}
                     {{/if}}
                 </select>
             </div>
@@ -114,7 +113,14 @@
                         <div class="form-group">
                             <label class="col-lg-4 control-label" for="status">Sex</label>
                             <div class="col-lg-8">
-                                <input id="sex" name="Sex" type="text" class="form-control" required="">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="Sex" value="M" checked>M</label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="Sex" value="F">F</label>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">

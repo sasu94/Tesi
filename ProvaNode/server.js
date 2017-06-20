@@ -193,6 +193,16 @@ app.post('/subjects', function (req, res) {
         db.loadFamilies(function (families) {
             res.json(families);
         });
+    } else if (req.body.removeSub != undefined) {
+        var db = require('./persistence/SubjectDAO');
+        db.removeSubject(req.body.removeSub, function (data) {
+            res.json(data);
+        });
+    } else if (req.body.removeFam != undefined) {
+        var db = require('./persistence/SubjectDAO');
+        db.removeFamily(req.body.removeFam, function (data) {
+            res.json(data);
+        });
     }
 });
 
@@ -244,14 +254,164 @@ app.get('/profile', function (req, res) {
     }
 });
 
+app.post('/profile', function (req, res) {
+    if (req.body.newPassword != undefined) {
+        if (req.session.user.password != req.body.oldPassword)
+            res.json(false);
+        else {
+            var db = require('./persistence/UserDAO');
+            db.changePassword(req.body.newPassword, req.session.user.id, function () {
+                req.session.user.password = req.body.newPassword;
+                res.json(true);
+            });
+        }
+
+
+    }
+});
+
 app.get('/search', function (req, res) {
     if (req.session.user == undefined) {
         res.redirect(303, '/')
     } else {
-        res.render('search');
+        var db = require('./persistence/SubjectDAO');
+        db.loadAllSubjects(function (subjects) {
+            db.loadFamilies(function (families) {
+                res.render('search', { subject: subjects, family: families });
+            });
+        });
     }
-
 });
+
+app.post('/search', function (req, res) {
+    var db = require('./persistence/SearchDAO');
+    if (req.query.action == 'search') {
+        if (req.body.FuncCheck == 'A')
+            req.body.func = ['intronic', 'intergenic', 'exonic', 'UTR5', 'UTR3', 'ncRNA_intronic', 'ncRNA_exonic', 'ncRNA_exonic', 'ncRNA_intronic', 'upstream', 'downstream', 'splicing', 'exonic;splicing', 'upstream;downstream'];
+        if (req.body.ExFuncCheck == 'A')
+            req.body.exFunc = ['frameshift insertion', 'frameshift deletion', 'nonframeshift insertion', 'nonframeshift deletion', 'nonsynonymous SNV', 'synonymous SNV', 'stopgain SNV', 'stoploss SNV', ' '];
+        var thousA = req.body['1000G_ALL'][0];
+        if (!(thousA.indexOf('null') > -1))
+            thousA += req.body['1000G_ALL'][1];
+        var thousAfr = req.body['1000G_AFR'][0];
+        if (!(thousAfr.indexOf('null') > -1))
+            thousAfr += req.body['1000G_AFR'][1];
+        var thousE = req.body['1000G_EUR'][0];
+        if (!(thousE.indexOf('null') > -1))
+            thousE += req.body['1000G_EUR'][1];
+
+        var exacf = req.body['ExAC_Freq'][0];
+        if (!(exacf.indexOf('null') > -1))
+            exacf += req.body['ExAC_Freq'][1];
+        var exaca = req.body['ExAC_AMR'][0];
+        if (!(exaca.indexOf('null') > -1))
+            exaca += req.body['ExAC_AMR'][1];
+        var exacn = req.body['ExAC_NFE'][0];
+        if (!(exacn.indexOf('null') > -1))
+            exacn += req.body['ExAC_NFE'][1];
+        var espa = req.body['ESP6500si_ALL'][0];
+        if (!(espa.indexOf('null') > -1))
+            espa += req.body['ESP6500si_ALL'][1];
+        var cg46 = req.body['CG46'][0];
+        if (!(cg46.indexOf('null') > -1))
+            cg46 += req.body['CG46'][1];
+        var cosmic = req.body['COSMIC_ID'][0];
+        if (!(cosmic.indexOf('null') > -1))
+            cosmic += req.body['COSMIC_ID'][1];
+        var clindis = req.body['ClinVar_DIS'][0];
+        if (!(clindis.indexOf('null') > -1))
+            clindis += req.body['ClinVar_DIS'][1];
+        var clinid = req.body['ClinVar_ID'][0];
+        if (!(clinid.indexOf('null') > -1))
+            clinid += req.body['ClinVar_ID'][1];
+        var clindb = req.body['ClinVar_DBID'][0];
+        if (!(clindb.indexOf('null') > -1))
+            clindb += req.body['ClinVar_DBID'][1];
+        var gwasdis = req.body['GWAS_DIS'][0];
+        if (!(gwasdis.indexOf('null') > -1))
+            gwasdis += req.body['GWAS_DIS'][1];
+        var gwasor = req.body['GWAS_OR'][0];
+        if (!(gwasor.indexOf('null') > -1))
+            gwasor += req.body['GWAS_OR'][1];
+        var chr = req.body['Chr'];
+        if (chr == 'all')
+            chr = ''
+        else {
+            chr = 'and chr=\'' + chr + '\'';
+        }
+        var gene = ''
+        if (req.body.Gene != '')
+            gene = ' and `Gene.refgene`=\'' + req.body.Gene + '\'';
+        var start = req.body['Start'][0];
+        if (!(start.indexOf('>=0') > -1))
+            start = ' and start' + start + req.body['Start'][1];
+        var end = req.body['End'][0];
+        if (!(end.indexOf('>=0') > -1))
+            end = ' and end' + start + req.body['End'][1];
+
+        var order = ''
+        if (req.body.Order != '')
+            order = ' order by ' + req.body.Order;
+        var common = req.body.common;
+        
+        switch (req.body.All) {
+            case 'A':
+                if (req.body.common != '')
+                    common = ' and ' + req.body.common + ' in (select ' + req.body.common + ' from variation group by ' + req.body.common + ' having count(distinct(Subject)) > 1)';
+
+                db.allSubject(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (data) {
+                    req.session.search = data;
+                    res.render('variation', { result: data });
+                });
+                break;
+            case 'S':
+                if (req.body.common != '')
+                    common = ' and ' + req.body.common + ' in (select ' + req.body.common + ' from variation where Subject in (?) group by ' + req.body.common + ' having count(distinct(Subject)) > 1)';
+
+                db.subjects(req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (data) {
+                    req.session.search = data;
+                    res.render('variation', { result: data });
+                });
+                break;
+            case 'F':
+                db.families(req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order,common, function (data) {
+                    req.session.search = data;
+                    res.render('variation', { result: data });
+                });
+                break;
+        }
+    } else if (req.query.action == 'filter') {
+        var index = req.body.filtering;
+        var tab = req.session.search;
+        var count = [];
+        db.filterValues(index, function (data) {
+            data.forEach(function (element) {
+                count[element[index]] = [];
+                tab.forEach(function (row) {
+                    if (!(element[index].indexOf(row['Subject']) > -1)) {
+                        if (element[index] == row[index]) {
+                            count[element[index]].push(row['Subject']);
+                        }
+                    }
+
+                });
+
+            });
+            console.log(count);
+
+            count.forEach(function (element) {
+                if (element.length > 1)
+                    console.log(element);
+            });
+
+
+            res.render('variation', { result: req.session.search });
+        })
+
+    }
+});
+
+
 
 app.post('/newProject', function (req, res) {
     var db = require('./persistence/SampleDAO');

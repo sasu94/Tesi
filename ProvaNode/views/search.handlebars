@@ -16,28 +16,65 @@
                     <ul class="nav nav-wizard">
 
                         <li class="active">
-                            <a href="#step1" data-toggle="tab">Q1</a>
+                            <a href="#step1" data-toggle="tab">Subjects</a>
                         </li>
 
                         <li class="disabled">
-                            <a href="#step2" data-toggle="tab">Q2</a>
+                            <a href="#step2" data-toggle="tab">Func</a>
                         </li>
 
                         <li class="disabled">
-                            <a href="#step3" data-toggle="tab">Q3</a>
-                        </li>
-
-                        <li class="disabled">
-                            <a href="#step4" data-toggle="tab">Q4</a>
+                            <a href="#step3" data-toggle="tab">Filter by</a>
                         </li>
                     </ul>
 
 
-                    <form>
+                    <form class="form-horizontal" action="/search?action=search" method="post" role="form">
                         <div class="tab-content">
                             <div class="tab-pane active" id="step1">
-                                <h3>Q1</h3>
-                                <p>This is step 1</p>
+                                <h3>Select subjects</h3>
+                                <div class="form-group">
+                                    <div class="col-lg-4">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="All" value="A" checked>All</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="All" value="S">Choose Subject
+                                            </label>
+                                            <br />
+                                            <label class="subjectScroll">
+                                                {{#each subject}}
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" disabled="disabled" name="subjects" value="{{this.Id}}">{{this.Id}}
+                                                        </label>
+                                                    </div>
+                                                {{/each}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="radio">
+                                            <label>
+                                                <input type="radio" name="All" value="F">Choose Family
+                                            </label>
+                                            <br />
+                                            <label class="subjectScroll">
+                                                {{#each family}}
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" disabled="disabled" name="family" value="{{this.Name}}">{{this.Name}}</label>
+                                                    </div>
+                                                {{/each}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
                                 <ul class="list-inline pull-right">
                                     <li>
                                         <button type="button" class="btn btn-primary cont">Continue</button>
@@ -45,8 +82,129 @@
                                 </ul>
                             </div>
                             <div class="tab-pane" id="step2">
-                                <h3>Q2</h3>
-                                <p>This is step 2</p>
+                                <h3>Functionalities</h3>
+                                <div class="col-lg-4">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="FuncCheck" value="A" checked>All</label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="FuncCheck" value="S">Choose Func
+                                        </label>
+                                        <br />
+                                        <label class="subjectScroll">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="exonic">exonic</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="exonic;splicing">exonic;splicing</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="splicing">splicing</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="UTR3">UTR3</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="UTR5">UTR5</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="intronic">intronic</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="intergenic">intergenic</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="upstream">upstream</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="downstream">downstream</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="upstream;downstream">upstream;downstream</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="ncRNA_exonic">ncRNA_exonic</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="ncRNA_intronic">ncRNA_intronic</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="ncRNA_UTR3">ncRNA_UTR3</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="func" disabled="disabled" value="ncRNA_UTR5">ncRNA_UTR5</label>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <h4>Exonic Func</h4>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="ExFuncCheck" value="A" checked>All</label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="ExFuncCheck" value="S">Choose Exonic Func
+                                        </label>
+                                        <br />
+                                        <label class="subjectScroll">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value="frameshift insertion">frameshift insertion</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value="frameshift deletion">frameshift deletion</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value="nonframeshift deletion">nonframeshift deletion</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value="nonframeshift insertion">nonframeshift insertion</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value="nonsynonymous SNV">nonsynonymous SNV</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value="synonymous SNV">synonymous SNV</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value="stopgain SNV">stopgain SNV</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value="stoploss SNV">stoploss SNV</label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" name="exFunc" disabled="disabled" value=" ">unknown</label>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12"></div>
                                 <ul class="list-inline pull-left">
                                     <li>
                                         <button type="button" class="btn btn-primary back">Back</button></li>
@@ -58,25 +216,331 @@
                                 </ul>
                             </div>
                             <div class="tab-pane" id="step3">
-                                <h3>Q3</h3>
-                                <p>This is step 3</p>
+                                <h3>Filter by</h3>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">1000G_ALL:</label>
+                                        <select class="form-control shortField" name="1000G_ALL">
+                                            <option value=" and ( 1000G_ALL>=0 || 1000G_ALL is null) "></option>
+                                            <option value=" and 1000G_ALL> ">></option>
+                                            <option value=" and 1000G_ALL>= ">>=</option>
+                                            <option value=" and 1000G_ALL= ">=</option>
+                                            <option value=" and 1000G_ALL< "><</option>
+                                            <option value=" and 1000G_ALL<= "><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" step="any" name="1000G_ALL" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">1000G_AFR:</label>
+                                        <select class="form-control shortField" name="1000G_AFR">
+                                            <option value=" and ( 1000G_AFR>=0 || 1000G_AFR is null) "></option>
+                                            <option value=" and 1000G_AFR> ">></option>
+                                            <option value=" and 1000G_AFR>= ">>=</option>
+                                            <option value=" and 1000G_AFR= ">=</option>
+                                            <option value=" and 1000G_AFR< "><</option>
+                                            <option value=" and 1000G_AFR<= "><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" step="any" name="1000G_AFR" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">1000G_EUR:</label>
+                                        <select class="form-control shortField" name="1000G_EUR">
+                                            <option value=" and ( 1000G_EUR>=0 || 1000G_EUR is null) "></option>
+                                            <option value=" and 1000G_EUR> ">></option>
+                                            <option value=" and 1000G_EUR>= ">>=</option>
+                                            <option value=" and 1000G_EUR= ">=</option>
+                                            <option value=" and 1000G_EUR< "><</option>
+                                            <option value=" and 1000G_EUR<= "><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="1000G_EUR" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">ExAC_Freq:</label>
+                                        <select class="form-control shortField" name="ExAC_Freq">
+                                            <option value=" and ( ExAC_Freq>=0 || ExAC_Freq is null) "></option>
+                                            <option value=" and ExAC_Freq>">></option>
+                                            <option value=" and ExAC_Freq>=">>=</option>
+                                            <option value=" and ExAC_Freq=">=</option>
+                                            <option value=" and ExAC_Freq<"><</option>
+                                            <option value=" and ExAC_Freq<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="ExAC_Freq" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">ExAC_AMR:</label>
+                                        <select class="form-control shortField" name="ExAC_AMR">
+                                            <option value=" and ( ExAC_AMR>=0 || ExAC_AMR is null) "></option>
+                                            <option value=" and ExAC_AMR>">></option>
+                                            <option value=" and ExAC_AMR>=">>=</option>
+                                            <option value=" and ExAC_AMR=">=</option>
+                                            <option value=" and ExAC_AMR<"><</option>
+                                            <option value=" and ExAC_AMR<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="ExAC_AMR" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">ExAC_NFE:</label>
+                                        <select class="form-control shortField" name="ExAC_NFE">
+                                            <option value=" and ( ExAC_NFE>=0 || ExAC_NFE is null) "></option>
+                                            <option value=" and ExAC_NFE>">></option>
+                                            <option value=" and ExAC_NFE>=">>=</option>
+                                            <option value=" and ExAC_NFE=">=</option>
+                                            <option value=" and ExAC_NFE<"><</option>
+                                            <option value=" and ExAC_NFE<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="ExAC_NFE" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">ESP6500si_ALL:</label>
+                                        <select class="form-control shortField" name="ESP6500si_ALL">
+                                            <option value=" and ( ESP6500si_ALL>=0 || ESP6500si_ALL is null) "></option>
+                                            <option value=" and ESP6500si_ALL>">></option>
+                                            <option value=" and ESP6500si_ALL>=">>=</option>
+                                            <option value=" and ESP6500si_ALL=">=</option>
+                                            <option value=" and ESP6500si_ALL<"><</option>
+                                            <option value=" and ESP6500si_ALL<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="ESP6500si_ALL" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">CG46:</label>
+                                        <select class="form-control shortField" name="CG46">
+                                            <option value=" and ( CG46>=0 || CG46 is null) "></option>
+                                            <option value=" and CG46>">></option>
+                                            <option value=" and CG46>=">>=</option>
+                                            <option value=" and CG46=">=</option>
+                                            <option value=" and CG46<"><</option>
+                                            <option value=" and CG46<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="CG46" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">COSMIC_ID:</label>
+                                        <select class="form-control shortField" name="COSMIC_ID">
+                                            <option value=" and ( COSMIC_ID>=0 || COSMIC_ID is null) "></option>
+                                            <option value=" and COSMIC_ID>">></option>
+                                            <option value=" and COSMIC_ID>=">>=</option>
+                                            <option value=" and COSMIC_ID=">=</option>
+                                            <option value=" and COSMIC_ID<"><</option>
+                                            <option value=" and COSMIC_ID<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="COSMIC_ID" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">ClinVar_DIS:</label>
+                                        <select class="form-control shortField" name="ClinVar_DIS">
+                                            <option value=" and ( ClinVar_DIS>=0 || ClinVar_DIS is null) "></option>
+                                            <option value=" and ClinVar_DIS>">></option>
+                                            <option value=" and ClinVar_DIS>=">>=</option>
+                                            <option value=" and ClinVar_DIS=">=</option>
+                                            <option value=" and ClinVar_DIS<"><</option>
+                                            <option value=" and ClinVar_DIS<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="ClinVar_DIS" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">ClinVar_ID:</label>
+                                        <select class="form-control shortField" name="ClinVar_ID">
+                                            <option value=" and ( ClinVar_ID>=0 || ClinVar_ID is null) "></option>
+                                            <option value=" and ClinVar_ID>">></option>
+                                            <option value=" and ClinVar_ID>=">>=</option>
+                                            <option value=" and ClinVar_ID=">=</option>
+                                            <option value=" and ClinVar_ID<"><</option>
+                                            <option value=" and ClinVar_ID<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="ClinVar_ID" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">ClinVar_DBID:</label>
+                                        <select class="form-control shortField" name="ClinVar_DBID">
+                                            <option value=" and ( ClinVar_DBID>=0 || ClinVar_DBID is null) "></option>
+                                            <option value=" and ClinVar_DBID>">></option>
+                                            <option value=" and ClinVar_DBID>=">>=</option>
+                                            <option value=" and ClinVar_DBID=">=</option>
+                                            <option value=" and ClinVar_DBID<"><</option>
+                                            <option value=" and ClinVar_DBID<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="ClinVar_DBID" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">GWAS_DIS:</label>
+                                        <select class="form-control shortField" name="GWAS_DIS">
+                                            <option value=" and ( GWAS_DIS>=0 || GWAS_DIS is null) "></option>
+                                            <option value=" and GWAS_DIS>">></option>
+                                            <option value=" and GWAS_DIS>=">>=</option>
+                                            <option value=" and GWAS_DIS=">=</option>
+                                            <option value=" and GWAS_DIS<"><</option>
+                                            <option value=" and GWAS_DIS<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="GWAS_DIS" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">GWAS_OR:</label>
+                                        <select class="form-control shortField" name="GWAS_OR">
+                                            <option value=" and ( GWAS_OR>=0 || GWAS_OR is null) "></option>
+                                            <option value=" and GWAS_OR>">></option>
+                                            <option value=" and GWAS_OR>=">>=</option>
+                                            <option value=" and GWAS_OR=">=</option>
+                                            <option value=" and GWAS_OR<"><</option>
+                                            <option value=" and GWAS_OR<="><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="GWAS_OR" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">Chr:</label>
+                                        <select class="form-control shortField" style="width: 100px !important" name="Chr">
+                                            <option>all</option>
+                                            <option>chr1</option>
+                                            <option>chr2</option>
+                                            <option>chr3</option>
+                                            <option>chr4</option>
+                                            <option>chr5</option>
+                                            <option>chr6</option>
+                                            <option>chr7</option>
+                                            <option>chr8</option>
+                                            <option>chr9</option>
+                                            <option>chr10</option>
+                                            <option>chr11</option>
+                                            <option>chr12</option>
+                                            <option>chr13</option>
+                                            <option>chr14</option>
+                                            <option>chr15</option>
+                                            <option>chr16</option>
+                                            <option>chr17</option>
+                                            <option>chr18</option>
+                                            <option>chr19</option>
+                                            <option>chr20</option>
+                                            <option>chr21</option>
+                                            <option>chr22</option>
+                                            <option>chrX</option>
+                                            <option>chrY</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">Start:</label>
+                                        <select class="form-control shortField" name="Start">
+                                            <option value=" and Start>=0"></option>
+                                            <option>></option>
+                                            <option>>=</option>
+                                            <option>=</option>
+                                            <option><</option>
+                                            <option><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="Start" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sel1" class="col-lg-4">End:</label>
+                                        <select class="form-control shortField" name="End">
+                                            <option value=" and End>=0"></option>
+                                            <option>></option>
+                                            <option>>=</option>
+                                            <option>=</option>
+                                            <option><</option>
+                                            <option><=</option>
+                                        </select>
+                                        <input type="number" step="any" class="form-control shortField" name="End" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Gene" class="col-lg-4">Gene:</label>
+                                        <input type="text" class="form-control shortField" name="Gene" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Order" class="col-lg-4">Order by:</label>
+                                        <select class="form-control shortField" style="width: 200px !important" name="Order">
+                                            <option value=""></option>
+                                            <option value="Chr">Chr</option>
+                                            <option value="Start">Start</option>
+                                            <option value="End">End</option>
+                                            <option value="Ref">Ref</option>
+                                            <option value="Alt">Alt</option>
+                                            <option value="`Func.refgene`">Func</option>
+                                            <option value="`Gene.refgene`">Gene</option>
+                                            <option value="`Gene.Detail.refgene`">GeneDetail</option>
+                                            <option value="`ExonicFunc,refgene`">ExonicFunc</option>
+                                            <option value="AAChange">AAChange</option>
+                                            <option value="1000G_ALL">1000G_ALL</option>
+                                            <option value="1000G_AFR">1000G_AFR</option>
+                                            <option value="1000G_AMR">1000G_AMR</option>
+                                            <option value="1000G_EAS">1000G_EAS</option>
+                                            <option value="1000G_EUR">1000G_EUR</option>
+                                            <option value="1000G_SAS">1000G_SAS</option>
+                                            <option value="ExAC_Freq">ExAC_Freq</option>
+                                            <option value="ExAC_AFR">ExAC_AFR</option>
+                                            <option value="ExAC_AMR">ExAC_AMR</option>
+                                            <option value="ExAC_EAS">ExAC_EAS</option>
+                                            <option value="ExAC_FIN">ExAC_FIN</option>
+                                            <option value="ExAC_NFE">ExAC_NFE</option>
+                                            <option value="ExAC_OTH">ExAC_OTH</option>
+                                            <option value="ExAC_SAS">ExAC_SAS</option>
+                                            <option value="ESP6500si_ALL">ESP6500si_ALL</option>
+                                            <option value="ESP6500si_AA">ESP6500si_AA</option>
+                                            <option value="ESP6500si_EA">ESP6500si_EA</option>
+                                            <option value="CG46">CG46</option>
+                                            <option value="NCI60">NCI60</option>
+                                            <option value="dbSNP">dbSNP</option>
+                                            <option value="COSMIC_ID">COSMIC_ID</option>
+                                            <option value="COSMIC_DIS">COSMIC_DIS</option>
+                                            <option value="ClinVar_SIG">ClinVar_SIG</option>
+                                            <option value="ClinVar_DIS">ClinVar_DIS</option>
+                                            <option value="ClinVar_STATUS">ClinVar_STATUS</option>
+                                            <option value="ClinVar_ID">ClinVar_ID</option>
+                                            <option value="ClinVar_DB">ClinVar_DB</option>
+                                            <option value="ClinVar_DBID">ClinVar_DBID</option>
+                                            <option value="GWAS_DIS">GWAS_DIS</option>
+                                            <option value="GWAS_OR">GWAS_OR</option>
+                                            <option value="GWAS_BETA">GWAS_BETA</option>
+                                            <option value="GWAS_PUBMED">GWAS_PUBMED</option>
+                                            <option value="GWAS_SNP">GWAS_SNP</option>
+                                            <option value="GWAS_P">GWAS_P</option>
+                                            <option value="SIFT_score">SIFT_score</option>
+                                            <option value="SIFT_pred">SIFT_pred</option>
+                                            <option value="Polyphen2_HDIV_score">Polyphen2_HDIV_score</option>
+                                            <option value="Polyphen2_HDIV_pred">Polyphen2_HDIV_pred</option>
+                                            <option value="Polyphen2_HVAR_score">Polyphen2_HVAR_score</option>
+                                            <option value="Polyphen2_HVAR_pred">Polyphen2_HVAR_pred</option>
+                                            <option value="LRT_score">LRT_score</option>
+                                            <option value="LRT_pred">LRT_pred</option>
+                                            <option value="MutationTaster_score">MutationTaster_score</option>
+                                            <option value="MutationTaster_pred">MutationTaster_pred</option>
+                                            <option value="MutationAssessor_score">MutationAssessor_score</option>
+                                            <option value="MutationAssessor_pred">MutationAssessor_pred</option>
+                                            <option value="FATHMM_score">FATHMM_score</option>
+                                            <option value="FATHMM_pred">FATHMM_pred</option>
+                                            <option value="RadialSVM_score">RadialSVM_score</option>
+                                            <option value="RadialSVM_pred">RadialSVM_pred</option>
+                                            <option value="LR_score">LR_score</option>
+                                            <option value="LR_pred">LR_pred</option>
+                                            <option value="VEST3_score">VEST3_score</option>
+                                            <option value="CADD_raw">CADD_raw</option>
+                                            <option value="CADD_phred">CADD_phred</option>
+                                            <option value="GERP++_RS">GERP++_RS</option>
+                                            <option value="phyloP46way_placental">phyloP46way_placental</option>
+                                            <option value="phyloP100way_vertebrate">phyloP100way_vertebrate</option>
+                                            <option value="SiPhy_29way_logOdds">SiPhy_29way_logOdds</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Order" class="col-lg-4">in Common:</label>
+                                        <select class="form-control shortField" style="width: 200px !important" name="common">
+                                            <option value=""></option>
+                                            <option value="Alt">Alt</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12"></div>
                                 <ul class="list-inline pull-left">
                                     <li>
                                         <button type="button" class="btn btn-primary back">Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right">
                                     <li>
-                                        <button type="button" class="btn btn-primary cont">Continue</button></li>
+                                        <input type="submit" class="btn btn-primary back" value="Finish" />
+                                    </li>
                                 </ul>
                             </div>
-                            <div class="tab-pane" id="step4">
-                                <h3>Q4</h3>
-                                <p>You have successfully completed all steps.</p>
-                                <ul class="list-inline pull-left">
-                                    <li>
-                                        <button type="button" class="btn btn-primary back">Back</button></li>
-                                </ul>
-                            </div>
+
                             <div class="clearfix"></div>
                         </div>
                     </form>

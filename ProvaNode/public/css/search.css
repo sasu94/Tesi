@@ -2,6 +2,12 @@
     margin: 20px auto;
 }
 
+.subjectScroll {
+    height: 400px;
+    overflow-y: auto;
+    width: 500px;
+}
+
 ul.nav-wizard {
     background-color: #f1f1f1;
     border: 1px solid #d4d4d4;
@@ -141,3 +147,4 @@ ul.nav-wizard {
             color: #999999;
             background: #ededed;
         }
+

@@ -7,7 +7,7 @@ module.exports = {
             conn.query('select * from User where Username=? and Password=?', [user, pass], function (error, results) {
                 if (results.length == 1) {
                     User = require('../model/User.js');
-                    req.session.user = new User(results[0].Id, req.body.username,results.Laboratory);
+                    req.session.user = new User(results[0].Id, req.body.username,req.body.password,results.Laboratory);
                     return res.redirect(303, '/');
                 } else {
                     req.session.flash = {
@@ -28,5 +28,17 @@ module.exports = {
                 }
             });
         })
+    },
+
+    changePassword: function (newPassword, user, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('update user set password=? where id=?', [newPassword,user], function (error, results) {
+                if (error) throw error;
+                cb();
+            });
+        })
+
+        
+
     }
 };

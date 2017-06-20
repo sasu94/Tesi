@@ -68,5 +68,20 @@ module.exports = {
                     cb(true);
             });
         })
+    },
+    removeSubject: function (id, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('delete from Subject where Id=?', id, function (error, results) {
+                cb(true);
+            });
+        })
+    },
+
+    removeFamily: function (name, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('delete from Family where name=?', name, function (error, results) {
+                cb(true);
+            });
+        })
     }
 };

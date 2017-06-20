@@ -23,3 +23,8 @@ section {
     object-fit:cover;
 
 }
+
+.shortField{
+    width:70px !important;
+    display:inline !important;
+}

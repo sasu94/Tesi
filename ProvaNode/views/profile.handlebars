@@ -1,23 +1,71 @@
 ﻿{{#section 'head'}}
 <title>Profile</title>
+<script type="text/javascript" src="/js/profile.js"></script>
 {{/section}}
 
 <section>
     <div class="page-header">
         <h1>Your profile</h1>
     </div>
-    <form class="form-horizontal" action="/submit" enctype="multipart/form-data" method="post" role="form">
-        <div class="form-group">
-            <label class="col-lg-2 control-label" for="name">Username</label>
-            <div class="col-lg-4">
-                {{user.Username}}
-            </div>
+
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#sum">Summary</a></li>
+        <li><a data-toggle="tab" href="#pass">Change password</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="sum" class="tab-pane fade in active">
+            <p>
+                <form class="form-horizontal" action="/submit" enctype="multipart/form-data" method="post" role="form">
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="name">Username</label>
+                        <div class="col-lg-4">
+                            {{user.Username}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="name">Laboratory</label>
+                        <div class="col-lg-4">
+                            {{user.Name}}
+                        </div>
+                    </div>
+                </form>
+            </p>
         </div>
-        <div class="form-group">
-            <label class="col-lg-2 control-label" for="name">Laboratory</label>
-            <div class="col-lg-4">
-                {{user.Name}}
-            </div>
+        <div id="pass" class="tab-pane fade">
+            <p>
+                <form class="form-horizontal" enctype="multipart/form-data" method="post" role="form">
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="name">Old Password</label>
+                        <div class="col-lg-4">
+                            <input type="password" id="old" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="name">New Password</label>
+                        <div class="col-lg-4">
+                            <input type="password" id="new" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label" for="name">Repeat password</label>
+                        <div class="col-lg-4">
+                            <input type="password" id="repeat" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-4">
+                            <button id="save" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+
+
+            </p>
         </div>
-        </form>
+    </div>
+
+
+
 </section>
