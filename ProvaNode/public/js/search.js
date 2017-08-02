@@ -53,6 +53,53 @@
         }
 
     });
+
+    $('select.shortField').change(function () {
+        var optionSelected = $("option:selected", this);
+        if (optionSelected.text() == '')
+            $(this).next().val('');
+    })
+
+    $('.last').click(function (e) {
+        e.preventDefault();
+        var b = false;
+        $('select.shortField option:selected').each(function (item) {
+            if ($(this).text() != '' && $(this).parent().next().val() === '')
+                b = true;
+        })
+        if (b)
+            alert('If you change default value, you must specify a valid one (for comma use \',\' instead of \'.\')');
+        else
+            $(this).unbind('click').click()
+
+    })
+
+    $('.next').click(function (e) {
+        e.preventDefault();
+        var page = parseInt($(this).prev().val())
+        if (isNaN(page))
+            alert('please insert a valid number');
+        else if (page + 1 <= $('#maxPages').val())
+            window.location.href = $(this).attr('href') + (page + 1);
+        else {
+            alert('The value is bigger than the maximum value');
+            $(this).prev().val($('#maxPages').val());
+        }
+    });
+
+    $('.previous').click(function (e) {
+        e.preventDefault();
+        var page = parseInt($(this).next().val())
+        if (isNaN(page))
+            alert('please insert a valid number');
+        else if (page - 1 > 0)
+            window.location.href = $(this).attr('href') + (page - 1);
+        else {
+            alert('The value should be greater than 0');
+            $(this).next().val(1);
+        }
+    });
+
 });
 
 function nextTab(elem) {

@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "ProvaNode", "ProvaNode\ProvaNode.njsproj", "{E39225F9-38BA-4926-A214-17B25A0B022E}"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "VarHunter", "ProvaNode\VarHunter.njsproj", "{E39225F9-38BA-4926-A214-17B25A0B022E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

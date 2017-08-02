@@ -21,29 +21,6 @@
             }
         })
     });
-    $('#newSubject').click(function (e) {
-        var name = $('#Id').val();
-        e.preventDefault();
-        $.ajax({
-            type: "POST",
-            url: "/subjects",
-            datatype: "json",
-            data: {
-                checkSubject: name,
-            },
-            success: function (data) {
-                console.log(data);
-                if (data === false) {
-                    alert('Subject already in the Database');
-                } else {
-                    $('#formSub').submit();
-                }
-            },
-            fail: function () {
-                alert('niente');
-            }
-        })
-    });
 
     $('input[name=Status]').change(function () {
         if($(this).val()=='Not Affected')
@@ -98,6 +75,76 @@
             })
             $(this).parent().parent().remove()
         }
+    });
+ 
+    $('a[data-toggle="tooltip"]').tooltip({
+        animated: 'fade',
+        placement: 'bottom',
+        html: true
+    });
+
+
+    $('.form-horizontal').submit(function (e) {
+        e.preventDefault();
+        var name = $('#Id').val();
+        var form = $(this);
+        $.ajax({
+            type: "POST",
+            url: "/subjects",
+            datatype: "json",
+            data: {
+                checkSubject: name,
+            },
+            success: function (data) {
+                console.log(data);
+                if (data === false) {
+                    alert('Subject already in the Database');
+                } else {
+                    $('.disappear').toggleClass('disappear');
+                    form.unbind('submit').submit()
+                }
+            },
+            fail: function () {
+                alert('niente');
+            }
+        })
+
+
+    });
+
+
+    $('#newProj').click(function (e) {
+        e.preventDefault();
+        $('#projModal').modal({ keyboard: true })
+    });
+
+    $('#newProject').click(function () {
+        var name = $('#projName').val();
+
+        $.ajax({
+            type: "POST",
+            url: "/newProjectAJAX",
+            datatype: "json",
+            data: {
+                newProject: name,
+            },
+            success: function (data) {
+                $('#projects').append('<option value=' + data + '>' + name + '</option>');
+                $('#projModal').modal('toggle');
+            },
+            fail: function () {
+                alert('niente');
+            }
+        });
+    });
+
+    $('#file').change(function () {
+        var ext = $(this).val().split('.').pop().toLowerCase();
+        if ($.inArray(ext, ['csv']) == -1) {
+            alert('invalid file!');
+            this.value = '';
+        }
+
     });
 
 })

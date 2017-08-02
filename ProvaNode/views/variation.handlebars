@@ -1,10 +1,6 @@
 ﻿{{#section 'head'}}
     <title>Results</title>
-<style>
-    .maxHeight {
-        max-height: 700px;
-    }
-</style>
+<script type="text/javascript" src="/js/search.js"></script>
 {{/section}}
 <section>
     <div class="page-header">
@@ -14,7 +10,7 @@
         <h1>There is no variation for your criteria</h1>
 
     {{else}}
-    <div class="table-responsive maxHeight">
+    <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr>
@@ -174,6 +170,13 @@
             </tbody>
         </table>
     </div>
-    
+    <div class="text-center">
+        <a class="previous" href="?page=">Previous</a>
+        <input type="text" class="shortField" value="{{page}}" />
+        of {{pages}}
+        <a class="next" href="?page=">Next</a>
+        <input type="hidden" id="maxPages" value="{{pages}}"/>
+    </div>
+
     {{/unless}}
 </section>

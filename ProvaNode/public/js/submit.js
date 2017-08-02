@@ -53,6 +53,11 @@
     $('#newSubject').click(function () {
         if ($('#Id').val() != '' && $('#protocolNumber').val() != '' && $('#age').val() != '' && $('#ageOfOnset').val() != '' && $('#famName').val() != '') {
             var name = $('#Id').val();
+            var files = new FormData();
+
+            $.each($('#genealogic')[0].files, function (i, file) {
+                files.append('file-' + i, file);
+            });
             $.ajax({
                 type: "POST",
                 url: "/subjects",
@@ -65,6 +70,7 @@
                     Age: $('#age').val(),
                     AgeOfOnset: $('#ageOfOnset').val(),
                     Family: $('#famName').val(),
+                    files
                 },
                 success: function (data) {
                     if (data === false)

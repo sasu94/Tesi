@@ -106,8 +106,13 @@ app.post('/submit', function (req, res) {
 
                 for (var j = 0; j < split.length; j++) {
                     for (var i = 0; i < split[j].length; i++) {
-                        if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
-                            split[j][i] = null;
+                        if (i == 8) {
+                            if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
+                                split[j][i] = ' ';
+                        } else {
+                            if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
+                                split[j][i] = null;
+                        }
                     }
                     (function (index) {
                         db.newVariation(split[j], fields.subject, data);
@@ -136,9 +141,12 @@ app.get('/subjects', function (req, res) {
     } else {
         if (req.query.id != undefined) {
             var db = require('./persistence/SubjectDAO');
+            var db2 = require('./persistence/SampleDAO');
             var id = req.query.id;
             db.loadSubjects(id, function (subjects) {
-                res.render('subjects', { subjects: subjects, family: req.query.id });
+                db2.loadProj(req.session.user.id, function (projects) {
+                    res.render('subjects', { subjects: subjects, family: req.query.id, projects: projects });
+                });
             });
 
 
@@ -164,11 +172,73 @@ app.post('/subjects', function (req, res) {
         });
 
     } else if (req.query.action == 'newSubject') {
-        var db = require('./persistence/SubjectDAO');
-        db.newSubject(req.body.Id, req.body.ProtocolNumber, req.body.Status, req.body.Sex, req.body.Age, req.body.AgeOfOnset, req.body.Family, function () {
-            res.redirect(303, '/subjects?id=' + req.body.Family);
+        var form = new formidable.IncomingForm();
+        form.parse(req, function (err, fields, files) {
+            if (err) return res.redirect(303, '/error');
+            var file = files.file;
+            var photo = files.photo;
+            var ped = files.ped;
+            var path = __dirname + '/uploads/';
+            var db = require('./persistence/SubjectDAO');
+            var db2 = require('./persistence/SampleDAO');
+            var id;
+            fs.renameSync(ped.path, path + "/photos/ped" + fields.Id + ".jpeg");
+
+
+            if (fields.ProtocolNumber == '')
+                fields.protocolNumber = null;
+            if (fields.Status == '')
+                fields.Status = null;
+            if (fields.Sex == '')
+                fields.Sex = null;
+            if (fields.Age == '')
+                fields.Age = null;
+            if (fields.AgeOfOnset == '')
+                fields.AgeOfOnset = null;
+            if (fields.GeneticStatus == '')
+                fields.GeneticStatus = null;
+
+
+            db.newSubject(fields.Id, fields.ProtocolNumber, fields.Status, fields.Sex, fields.Age, fields.AgeOfOnset, fields.GeneticStatus, fields.Family, function () {
+
+                var data = db2.newFile(fields.Id, fields.project, function (data) {
+                    fs.renameSync(photo.path, path + "/photos/" + data + ".jpeg");
+                    fs.renameSync(file.path, path + "/files/" + data + ".csv");
+                    var parser = parse({ delimiter: ',' }, function (err, split) {
+                        if (err) throw err;
+                        split.splice(0, 1);
+
+                        for (var j = 0; j < split.length; j++) {
+                            for (var i = 0; i < split[j].length; i++) {
+                                if (i == 8) {
+                                    if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
+                                        split[j][i] = ' ';
+                                } else {
+                                    if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
+                                        split[j][i] = null;
+                                }
+                            }
+                            (function (index) {
+                                db2.newVariation(split[j], fields.Id, data);
+                                if (index == split.length - 1) {
+                                    req.session.flash = {
+                                        message: 'Your file has been uploaded successfully'
+                                    }
+                                    res.redirect(303, '/subjects?id=' + fields.Family);
+                                }
+                            })(j);
+                        }
+                    });
+                    fs.createReadStream(path + '/files/' + data + '.csv').pipe(parser);
+                });
+            });
+
 
         });
+
+
+
+
     } else if (req.body.checkFamily != undefined) {
         var db = require('./persistence/SubjectDAO');
         db.checkFamily(req.body.checkFamily, function (data) {
@@ -182,10 +252,29 @@ app.post('/subjects', function (req, res) {
         });
 
     } else if (req.body.newSubject != undefined) {
-        var db = require('./persistence/SubjectDAO');
-        var data = db.newSubject(req.body.newSubject, req.body.ProtocolNumber, req.body.Status, req.body.Sex, req.body.Age, req.body.AgeOfOnset, req.body.Family, function (data) {
-            res.json(data);
-        });
+
+        //var form = new formidable.IncomingForm();
+        //form.parse(req, function (err, fields, files) {
+        //    if (err) return res.redirect(303, '/error');
+        //    var photo = files.genealogic;
+        //    var path = __dirname + '/uploads/';
+        //    var db = require('./persistence/SubjectDAO');
+        //    var id;
+        //    fs.renameSync(photo.path, path + "/photos/" + fields.Id + ".jpeg");
+        //    console.log(fields);
+        //    db.newSubject(fields.Id, fields.ProtocolNumber, fields.Status, fields.Sex, fields.Age, fields.AgeOfOnset, fields.GeneticStatus, fields.Family, function (data) {
+        //        res.json(data)
+        //    });
+
+
+
+
+        //});
+        console.log(req.body);
+        //var db = require('./persistence/SubjectDAO');
+        //var data = db.newSubject(req.body.newSubject, req.body.ProtocolNumber, req.body.Status, req.body.Sex, req.body.Age, req.body.AgeOfOnset, req.body.Family, function (data) {
+        //    res.json(data);
+        //});
 
     } else if (req.body.loadFamilies != undefined) {
         var db = require('./persistence/SubjectDAO');
@@ -220,9 +309,20 @@ app.get('/projects', function (req, res) {
 });
 
 app.post('/projects', function (req, res) {
-    if (req.body.remove != undefined) {
-        var db = require('./persistence/SampleDAO');
-        db.removeProject(req.body.remove);
+    var db = require('./persistence/SampleDAO');
+    if (req.body.removeProj != undefined) {
+        console.log(req.body.removeProj);
+        db.samplesByProject(req.body.removeProj, function (samples) {
+            samples.forEach(function (item) {
+                db.removeSubjectsBySample(item.id, function () {
+                    db.removeProject(req.body.removeProj);
+                });
+            })
+        });
+    } else if (req.body.removeSample != undefined) {
+        db.removeSubjectsBySample(req.body.removeSample, function (data) {
+            db.removeSample(req.body.removeSample);
+        });
     }
 });
 
@@ -273,7 +373,25 @@ app.post('/profile', function (req, res) {
 app.get('/search', function (req, res) {
     if (req.session.user == undefined) {
         res.redirect(303, '/')
-    } else {
+    } else if (req.query.page != undefined) {
+        var db = require('./persistence/SearchDAO');
+        if (req.session.type == 'A') {
+            db.AllSubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, req.query.page, function (data) {
+                res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+
+            });
+        } else if (req.session.type == 'S') {
+            db.SubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, req.session.subjects, req.query.page, function (data) {
+                res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+            });
+        } else {
+            db.FamiliesPaginated(req.session.query, req.session.func, req.session.ExFunc, req.session.subjects, req.query.page, function (data) {
+                res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+            });
+
+        }
+    }
+    else {
         var db = require('./persistence/SubjectDAO');
         db.loadAllSubjects(function (subjects) {
             db.loadFamilies(function (families) {
@@ -348,35 +466,71 @@ app.post('/search', function (req, res) {
         var end = req.body['End'][0];
         if (!(end.indexOf('>=0') > -1))
             end = ' and end' + start + req.body['End'][1];
-
-        var order = ''
-        if (req.body.Order != '')
-            order = ' order by ' + req.body.Order;
         var common = req.body.common;
-        
+        var order = ''
+
+        if (common != '') {
+            order = ' order by Start'
+            if (req.body.Order != '')
+                order += ', ' + req.body.Order;
+        } else {
+            if (req.body.Order != '')
+                order = ' order by ' + req.body.Order;
+        }
+
         switch (req.body.All) {
             case 'A':
-                if (req.body.common != '')
-                    common = ' and ' + req.body.common + ' in (select ' + req.body.common + ' from variation group by ' + req.body.common + ' having count(distinct(Subject)) > 1)';
+                if (req.body.common == 'yes')
+                    common = ' and Start in (select Start from variation group by Start having count(distinct(Subject)) > 1)';
+                else if (req.body.common == 'no')
+                    common = ' and Start not in (select Start from variation group by Start having count(distinct(Subject)) > 1)';
 
-                db.allSubject(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (data) {
-                    req.session.search = data;
-                    res.render('variation', { result: data });
+                db.numPagesAll(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (limit) {
+                    db.allSubject(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, 0, function (data, query, func, ExFunc) {
+                        req.session.type = 'A'
+                        req.session.query = query;
+                        req.session.func = func;
+                        req.session.ExFunc = ExFunc;
+                        req.session.limit = limit;
+                        res.render('variation', { result: data, pages: limit, page: 1 });
+                    });
                 });
                 break;
             case 'S':
-                if (req.body.common != '')
-                    common = ' and ' + req.body.common + ' in (select ' + req.body.common + ' from variation where Subject in (?) group by ' + req.body.common + ' having count(distinct(Subject)) > 1)';
+                if (req.body.common == 'yes')
+                    common = ' and Start in (select Start from variation where Subject in (?) group by Start having count(distinct(Subject)) > 1)';
+                else if (req.body.common == 'no')
+                    common = ' and Start not in (select Start from variation where Subject in (?) group by Start having count(distinct(Subject)) > 1)';
 
-                db.subjects(req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (data) {
-                    req.session.search = data;
-                    res.render('variation', { result: data });
+                db.numPagesSubj(req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (limit) {
+                    db.subjects(req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, 0, function (data, query, func, ExFunc, subjects) {
+                        req.session.type = 'S'
+                        req.session.query = query;
+                        req.session.func = func;
+                        req.session.ExFunc = ExFunc;
+                        req.session.subjects = subjects;
+                        req.session.limit = limit;
+                        res.render('variation', { result: data, pages: limit, page: 1 });
+                    });
                 });
                 break;
             case 'F':
-                db.families(req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order,common, function (data) {
-                    req.session.search = data;
-                    res.render('variation', { result: data });
+                if (req.body.common == 'yes')
+                    common = ' and Start in (select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) group by Start having count(distinct(Subject)) > 1)';
+                else if (req.body.common == 'no')
+                    common = ' and Start not in (select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) group by Start having count(distinct(Subject)) > 1)';
+
+
+                db.numPagesFam(req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (limit) {
+                    db.families(req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, 0, function (data, query, func, ExFunc, families) {
+                        req.session.type = 'F'
+                        req.session.query = query;
+                        req.session.func = func;
+                        req.session.ExFunc = ExFunc;
+                        req.session.subjects = families;
+                        req.session.limit = limit;
+                        res.render('variation', { result: data, pages: limit, page: 1 });
+                    });
                 });
                 break;
         }
