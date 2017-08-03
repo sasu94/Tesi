@@ -152,9 +152,13 @@ app.get('/subjects', function (req, res) {
 
         } else {
             var db = require('./persistence/SubjectDAO');
-
+            var db2 = require('./persistence/SampleDAO');
             db.loadFamilies(function (families) {
-                res.render('families', { families: families });
+                db.getSporadic(function (sporadic) {
+                    db2.loadProj(req.session.user.id, function (projects) {
+                    res.render('families', { families: families, sporadic: sporadic, projects:projects});
+                    });
+                });
             });
         }
 
@@ -170,6 +174,73 @@ app.post('/subjects', function (req, res) {
             res.redirect(303, '/subjects');
 
         });
+
+    } else if (req.query.action == 'newSporadic') {
+        var form = new formidable.IncomingForm();
+        form.parse(req, function (err, fields, files) {
+            if (err) return res.redirect(303, '/error');
+            var file = files.file;
+            var photo = files.photo;
+            var ped = files.ped;
+            var path = __dirname + '/uploads/';
+            var db = require('./persistence/SubjectDAO');
+            var db2 = require('./persistence/SampleDAO');
+            var id;
+            fs.renameSync(ped.path, path + "/photos/ped" + fields.Id + ".jpeg");
+
+
+            if (fields.ProtocolNumber == '')
+                fields.protocolNumber = null;
+            if (fields.Status == '')
+                fields.Status = null;
+            if (fields.Sex == '')
+                fields.Sex = null;
+            if (fields.Age == '')
+                fields.Age = null;
+            if (fields.AgeOfOnset == '')
+                fields.AgeOfOnset = null;
+            if (fields.GeneticStatus == '')
+                fields.GeneticStatus = null;
+
+
+            db.newSubject(fields.Id, fields.ProtocolNumber, fields.Status, fields.Sex, fields.Age, fields.AgeOfOnset, fields.GeneticStatus, null, function () {
+
+                var data = db2.newFile(fields.Id, fields.project, function (data) {
+                    fs.renameSync(photo.path, path + "/photos/" + data + ".jpeg");
+                    fs.renameSync(file.path, path + "/files/" + data + ".csv");
+                    var parser = parse({ delimiter: ',' }, function (err, split) {
+                        if (err) throw err;
+                        split.splice(0, 1);
+
+                        for (var j = 0; j < split.length; j++) {
+                            for (var i = 0; i < split[j].length; i++) {
+                                if (i == 8) {
+                                    if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
+                                        split[j][i] = ' ';
+                                } else {
+                                    if (split[j][i] == '.' || split[j][i] == ' ' || split[j][i] == '')
+                                        split[j][i] = null;
+                                }
+                            }
+                            (function (index) {
+                                db2.newVariation(split[j], fields.Id, data);
+                                if (index == split.length - 1) {
+                                    req.session.flash = {
+                                        message: 'Your file has been uploaded successfully'
+                                    }
+                                    res.redirect(303, '/subjects');
+                                }
+                            })(j);
+                        }
+                    });
+                    fs.createReadStream(path + '/files/' + data + '.csv').pipe(parser);
+                });
+            });
+
+
+        });
+
+
 
     } else if (req.query.action == 'newSubject') {
         var form = new formidable.IncomingForm();
@@ -561,6 +632,38 @@ app.post('/search', function (req, res) {
 
             res.render('variation', { result: req.session.search });
         })
+
+    }
+});
+
+app.get('/registration', function (req, res) {
+    var db = require('./persistence/UserDAO');
+    db.getLaboratory(function (data) {
+        res.render('registration', { lab: data });
+    });
+});
+
+app.post('/registration', function (req, res) {
+    if (req.body.newLab != undefined) {
+        var db = require('./persistence/UserDAO');
+        db.newLaboratory(req.body.newLab, function (data) {
+            res.json(data)
+
+        })
+    } else if (req.body.checkUser != undefined) {
+        var db = require('./persistence/UserDAO');
+        db.checkUser(req.body.checkUser, function (data) {
+            res.json(data);
+        });
+    } else {
+        var db = require('./persistence/UserDAO');
+        db.newUser(req.body.username, req.body.password, parseInt(req.body.Lab), function (data) {
+            req.session.flash = {
+                message: 'Your registration is complete'
+            }
+            res.redirect(303, '/registration');
+        });
+
 
     }
 });

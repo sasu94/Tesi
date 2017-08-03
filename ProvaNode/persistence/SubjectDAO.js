@@ -78,8 +78,8 @@ module.exports = {
     },
     removeSubject: function (id, cb) {
         connection.getConnection(function (err, conn) {
-            conn.release()
             conn.query('delete from Subject where Id=?', id, function (error, results) {
+            conn.release()
                 cb(true);
             });
         })
@@ -87,10 +87,21 @@ module.exports = {
 
     removeFamily: function (name, cb) {
         connection.getConnection(function (err, conn) {
-            conn.release()
             conn.query('delete from Family where name=?', name, function (error, results) {
+            conn.release()
                 cb(true);
             });
         })
+    },
+    getSporadic: function (cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('select * from Subject where family is null', function (error, results) {
+                conn.release()
+                if (error) throw error;
+                cb(results);
+            });
+        })
+
+
     }
 };

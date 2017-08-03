@@ -52,4 +52,210 @@
             </div>
         </div>
     </form>
+
+    <div class="page-header">
+        <h1>Sporadic Subjects</h1>
+    </div>
+
+    {{#unless sporadic}}
+        <h1>There aren't families</h1>
+
+    {{else}}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>PED</th>
+                        <th>Name</th>
+                        <th>Protocol #</th>
+                        <th>Status</th>
+                        <th>Sex</th>
+                        <th>Age</th>
+                        <th>Age of Onset</th>
+                        <th>Genetic Status</th>
+                        <th class="shortColumn">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each sporadic}}
+                    <tr>
+                        <td><a data-toggle="tooltip" title="">
+                            <img class="pic" src="/photos/ped{{this.Id}}.jpeg" />
+                        </a></td>
+                        <td>{{this.Id}}</td>
+                        <td>{{this.ProtocolNumber}}</td>
+                        <td>{{this.Status}}</td>
+                        <td>{{this.Sex}}</td>
+                        <td>{{this.Age}}</td>
+                        <td>{{this.AgeOfOnset}}</td>
+                        <td>{{this.GeneticStatus}}</td>
+                        <td><a class="removeSub" href="#" on="{{this.Id}}"><span class="glyphicon glyphicon-remove"></span></a></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    
+    {{/unless}}
+
+    <form class="form-horizontal" id="formSub" enctype="multipart/form-data" action="/subjects?action=newSporadic" method="post" role="form">
+        <div class="form-group">
+            <h3 class="col-lg-offset-2">New  sporadic subject</h3>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="name">Name</label>
+            <div class="col-lg-4">
+                <input id="Id" name="Id" type="text" class="form-control" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="protocolNumber">Protocol Number</label>
+            <div class="col-lg-4">
+                <input id="protocolNumber" name="ProtocolNumber" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Status</label>
+            <div class="col-lg-4">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="" checked>Unknown</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Affected">Affected</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Not Affected">Not Affected</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="GeneticStatus">Genetic Status</label>
+            <div class="col-lg-4">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="" checked>Unknown</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="Familiar">Familiar</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="Sporadic">Sporadic</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Sex</label>
+            <div class="col-lg-4">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="" checked>Unknown</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="M">M</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="F">F</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Age</label>
+            <div class="col-lg-4">
+                <input id="age" name="Age" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Age of Onset</label>
+            <div class="col-lg-4">
+                <input id="ageOfOnset" name="AgeOfOnset" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="photo">Submit a PED</label>
+            <div class="col-lg-4">
+                <input id="ped" name="ped" type="file">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="photo">Choose a photo</label>
+            <div class="col-lg-4">
+                <input id="photo" name="photo" type="file">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="file">Choose a csv file</label>
+            <div class="col-lg-4">
+                <input id="file" name="file" type="file" accept=".csv" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="project">Project</label>
+            <div class="col-lg-4">
+                <select name="project" id="projects" class="form-control" required>
+                    {{#if projects}}
+                        {{#each projects}}
+                            <option value="{{this.Id}}">{{this.Name}}</option>
+                    {{/each}}
+                    {{/if}}
+                </select>
+            </div>
+            <div class="col-lg-4">
+                <a href="#" id="newProj">New Project</a>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <button type="submit" id="newSubject" class="btn btn-default">Add</button>
+                </div>
+            </div>
+        </div>
+        
+         <div class="alert alert-info disappear">
+            Wait some minutes until your file is completely uploaded  <i class="fa fa-circle-o-notch fa-spin" style="font-size: 24px"></i>
+        </div>
+        {{#if flash}}
+           <div class="alert alert-dismissible alert-success">
+               <button type="button" class="close"
+                   data-dismiss="alert" aria-hidden="true">
+                   &times;
+               </button>
+               {{{flash.message}}}
+           </div>
+        {{/if}}
+    </form>
+
+
+    <div class="modal fade" id="projModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times; </button>
+                    <h4 class="modal-title">Add a new Project</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-lg-4 control-label" for="photo">Project name</label>
+                            <div class="col-lg-8">
+                                <input id="projName" name="name" type="text" class="form-control" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close </button>
+                    <button id="newProject" type="button" class="btn btn-primary">Submit changes </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
 </section>

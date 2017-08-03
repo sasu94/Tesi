@@ -58,6 +58,9 @@
     <Compile Include="public\js\projects.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="public\js\registration.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="public\js\samples.js">
       <SubType>Code</SubType>
     </Compile>
@@ -87,6 +90,9 @@
     </Content>
     <Content Include="views\home.handlebars" />
     <Content Include="views\layouts\main.handlebars" />
+    <Content Include="views\registration.handlebars">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="views\login.handlebars">
       <SubType>Code</SubType>
     </Content>
