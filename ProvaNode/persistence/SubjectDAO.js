@@ -103,5 +103,25 @@ module.exports = {
         })
 
 
+    },
+    getSubject: function (id, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('select * from Subject where Id=?',[id], function (error, results) {
+                conn.release()
+                if (error) throw error;
+                cb(results);
+            });
+        })
+
+    },
+    editSubject: function (id, protocolNumber, status, geneticStatus, sex, age,ageOfOnset, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('update Subject set ProtocolNumber=?,Status=?,GeneticStatus=?,Sex=?,Age=?,AgeOfOnset=? where Id=?', [protocolNumber, status, geneticStatus, sex, age, ageOfOnset,id], function (error, results) {
+                conn.release()
+                if (error) throw error;
+                cb(results);
+            });
+        })
+
     }
 };

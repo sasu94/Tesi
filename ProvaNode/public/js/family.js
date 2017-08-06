@@ -52,6 +52,7 @@
             $(this).parent().parent().remove()
         }
     });
+   
 
     $('.removeFam').click(function (e) {
         e.preventDefault();

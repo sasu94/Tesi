@@ -44,7 +44,7 @@
                                                 <input type="radio" name="All" value="S">Choose Subject
                                             </label>
                                             <br />
-                                            <label class="subjectScroll">
+                                            <div class="subjectScroll">
                                                 {{#each subject}}
                                                     <div class="checkbox">
                                                         <label>
@@ -52,7 +52,7 @@
                                                         </label>
                                                     </div>
                                                 {{/each}}
-                                            </label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
@@ -61,14 +61,14 @@
                                                 <input type="radio" name="All" value="F">Choose Family
                                             </label>
                                             <br />
-                                            <label class="subjectScroll">
+                                            <div class="subjectScroll">
                                                 {{#each family}}
                                                     <div class="checkbox">
                                                         <label>
                                                             <input type="checkbox" disabled="disabled" name="family" value="{{this.Name}}">{{this.Name}}</label>
                                                     </div>
                                                 {{/each}}
-                                            </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

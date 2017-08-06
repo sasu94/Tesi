@@ -30,6 +30,12 @@ var handlebars = require('express-handlebars')
                 if (!this._sections) this._sections = {};
                 this._sections[name] = options.fn(this);
                 return null;
+            },
+            if_eq: function (a, b, opts) {
+                if (a == b) // Or === depending on your needs
+                    return opts.fn(this);
+                else
+                    return opts.inverse(this);
             }
         }
     });
@@ -138,6 +144,12 @@ app.post('/submit', function (req, res) {
 app.get('/subjects', function (req, res) {
     if (req.session.user == undefined) {
         res.redirect(303, '/')
+    } else if (req.query.edit != undefined) {
+        var db = require('./persistence/SubjectDAO');
+        db.getSubject(req.query.edit, function (data) {
+            res.render('subjectEdit', { subject: data[0] });
+        });
+
     } else {
         if (req.query.id != undefined) {
             var db = require('./persistence/SubjectDAO');
@@ -156,7 +168,7 @@ app.get('/subjects', function (req, res) {
             db.loadFamilies(function (families) {
                 db.getSporadic(function (sporadic) {
                     db2.loadProj(req.session.user.id, function (projects) {
-                    res.render('families', { families: families, sporadic: sporadic, projects:projects});
+                        res.render('families', { families: families, sporadic: sporadic, projects: projects });
                     });
                 });
             });
@@ -173,6 +185,29 @@ app.post('/subjects', function (req, res) {
         db.newFamily(req.body.name, function () {
             res.redirect(303, '/subjects');
 
+        });
+
+    } else if (req.query.action=='edit') {
+        var db = require('./persistence/SubjectDAO');
+
+        if (req.body.ProtocolNumber == '')
+            req.body.protocolNumber = null;
+        if (req.body.Status == '')
+            req.body.Status = null;
+        if (req.body.Sex == '')
+            req.body.Sex = null;
+        if (req.body.Age == '')
+            req.body.Age = null;
+        if (req.body.AgeOfOnset == '')
+            req.body.AgeOfOnset = null;
+        if (req.body.GeneticStatus == '')
+            req.body.GeneticStatus = null;
+
+        db.editSubject(req.body.Id, req.body.ProtocolNumber, req.body.Status, req.body.GeneticStatus, req.body.Sex, req.body.Age, req.body.AgeOfOnset, function (data) {
+            req.session.flash = {
+                message: 'Your subject has been edited successfully'
+            }
+            res.redirect(303, '/subjects?edit=' + req.body.Id);
         });
 
     } else if (req.query.action == 'newSporadic') {
@@ -447,17 +482,92 @@ app.get('/search', function (req, res) {
     } else if (req.query.page != undefined) {
         var db = require('./persistence/SearchDAO');
         if (req.session.type == 'A') {
-            db.AllSubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, req.query.page, function (data) {
-                res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+            var page = (parseInt(req.query.page) - 1) * 15;
+            db.AllSubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, page, function (data) {
+                if (req.session.comm == true) {
+                    var sta = data[0].Start; var ref = data[0].Ref;
+                    var r = [];
+                    r.push(data[0]);
+                    var S = [];
+                    S.push(data[0].Subject);
+                    for (i = 1; i < data.length; i++) {
+                        if (data[i].Start == sta && data[i].Ref == ref)
+                            S.push(data[i].Subject);
+                        else {
+                            r[r.length - 1].Subject = S;
+                            r.push(data[i]);
+                            S = [];
+                            S.push(data[i].Subject);
+                            sta = data[i].Start;
+                            ref = data[i].Ref;
+                        }
+                    }
+                    r[r.length - 1].Subject = S;
+                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page });
+                } else {
+
+                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+                }
 
             });
         } else if (req.session.type == 'S') {
-            db.SubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, req.session.subjects, req.query.page, function (data) {
-                res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+            var subjects2 = req.session.subjects;
+            if (req.session.comm == 0)
+                subjects2 = (parseInt(req.query.page) - 1) * 15;
+            db.SubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, req.session.subjects, subjects2, (parseInt(req.query.page) - 1) * 15, function (data) {
+                if (req.session.comm == 1) {
+
+                    var sta = data[0].Start; var ref = data[0].Ref;
+                    var r = [];
+                    r.push(data[0]);
+                    var S = [];
+                    S.push(data[0].Subject);
+                    for (i = 1; i < data.length; i++) {
+                        if (data[i].Start == sta && data[i].Ref == ref)
+                            S.push(data[i].Subject);
+                        else {
+                            r[r.length - 1].Subject = S;
+                            r.push(data[i]);
+                            S = [];
+                            S.push(data[i].Subject);
+                            sta = data[i].Start;
+                            ref = data[i].Ref;
+                        }
+                    }
+                    r[r.length - 1].Subject = S;
+                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page });
+                } else {
+                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+                }
             });
         } else {
-            db.FamiliesPaginated(req.session.query, req.session.func, req.session.ExFunc, req.session.subjects, req.query.page, function (data) {
-                res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+            var families2 = req.session.subjects;
+            if (req.session.comm == 0)
+                families2 = (parseInt(req.query.page) - 1) * 15
+            db.FamiliesPaginated(req.session.query, req.session.func, req.session.ExFunc, req.session.subjects, families2, (parseInt(req.query.page) - 1) * 15, function (data) {
+                if (req.session.comm == 1) {
+                    var sta = data[0].Start; var ref = data[0].Ref;
+                    var r = [];
+                    r.push(data[0]);
+                    var S = [];
+                    S.push(data[0].Subject);
+                    for (i = 1; i < data.length; i++) {
+                        if (data[i].Start == sta && data[i].Ref == ref)
+                            S.push(data[i].Subject);
+                        else {
+                            r[r.length - 1].Subject = S;
+                            r.push(data[i]);
+                            S = [];
+                            S.push(data[i].Subject);
+                            sta = data[i].Start;
+                            ref = data[i].Ref;
+                        }
+                    }
+                    r[r.length - 1].Subject = S;
+                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page });
+                } else {
+                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+                }
             });
 
         }
@@ -541,7 +651,7 @@ app.post('/search', function (req, res) {
         var order = ''
 
         if (common != '') {
-            order = ' order by Start'
+            order = ' order by Start,Ref'
             if (req.body.Order != '')
                 order += ', ' + req.body.Order;
         } else {
@@ -549,58 +659,178 @@ app.post('/search', function (req, res) {
                 order = ' order by ' + req.body.Order;
         }
 
+        var pagination = ' limit ?,15';
+        var commonp;
         switch (req.body.All) {
             case 'A':
-                if (req.body.common == 'yes')
-                    common = ' and Start in (select Start from variation group by Start having count(distinct(Subject)) > 1)';
-                else if (req.body.common == 'no')
-                    common = ' and Start not in (select Start from variation group by Start having count(distinct(Subject)) > 1)';
+                commonp = '';
+                var init = 'select count(*)/ 15 as num ';
+                if (req.body.common == 'yes') {
+                    common = ' and Start in (Select * from(select Start from variation group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
+                    commonp = ' group by Start having count(distinct(Subject)) > 1) as t';
+                    pagination = '';
+                    init = 'select count(*)/ 15 as num from(select * ';
+                }
+                else if (req.body.common == 'no') {
+                    commonp = common = ' and Start not in (select Start from variation group by Start having count(distinct(Subject)) > 1)';
+                }
 
-                db.numPagesAll(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (limit) {
-                    db.allSubject(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, 0, function (data, query, func, ExFunc) {
-                        req.session.type = 'A'
-                        req.session.query = query;
-                        req.session.func = func;
-                        req.session.ExFunc = ExFunc;
-                        req.session.limit = limit;
-                        res.render('variation', { result: data, pages: limit, page: 1 });
+
+                db.numPagesAll(init, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit) {
+                    db.allSubject(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, 0, function (data, query, func, ExFunc) {
+                        if (req.body.common == 'yes') {
+                            var sta = data[0].Start; var ref = data[0].Ref;
+                            var r = [];
+                            r.push(data[0]);
+                            var S = [];
+                            S.push(data[0].Subject);
+                            for (i = 1; i < data.length; i++) {
+                                if (data[i].Start == sta && data[i].Ref == ref)
+                                    S.push(data[i].Subject);
+                                else {
+                                    r[r.length - 1].Subject = S;
+                                    r.push(data[i]);
+                                    S = [];
+                                    S.push(data[i].Subject);
+                                    sta = data[i].Start;
+                                    ref = data[i].Ref;
+                                }
+                            }
+                            r[r.length - 1].Subject = S;
+                            req.session.type = 'A'
+                            req.session.query = query;
+                            req.session.func = func;
+                            req.session.ExFunc = ExFunc;
+                            req.session.limit = limit;
+                            req.session.comm = true;
+                            res.render('variation', { common: r, pages: limit, page: 1 });
+                        } else {
+                            req.session.type = 'A'
+                            req.session.query = query;
+                            req.session.func = func;
+                            req.session.ExFunc = ExFunc;
+                            req.session.limit = limit;
+                            req.session.comm = false;
+                            res.render('variation', { result: data, pages: limit, page: 1 });
+                        }
                     });
                 });
                 break;
             case 'S':
-                if (req.body.common == 'yes')
-                    common = ' and Start in (select Start from variation where Subject in (?) group by Start having count(distinct(Subject)) > 1)';
-                else if (req.body.common == 'no')
-                    common = ' and Start not in (select Start from variation where Subject in (?) group by Start having count(distinct(Subject)) > 1)';
+                var subject2 = 0;
+                commonp = '';
+                req.session.comm = 0;
+                var init = 'select count(*)/ 15 as num ';
+                if (req.body.common == 'yes') {
+                    common = ' and Start in (select * from(select Start from variation where Subject in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
+                    commonp = ' group by Start having count(distinct(Subject)) > 1) as t';
+                    pagination = ''
+                    subject2 = req.body.subjects;
+                    req.session.comm = 1;
+                    var init = 'select count(*)/ 15 as num from(select * ';
+                }
+                else if (req.body.common == 'no') {
+                    commonp = common = ' and Start not in (select Start from variation where Subject in (?) group by Start having count(distinct(Subject)) > 1)';
+                    subject2 = req.body.subjects;
+                    req.session.comm = 2;
+                }
+                db.numPagesSubj(init, req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit) {
+                    db.subjects(req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, 0, subject2, function (data, query, func, ExFunc, subjects) {
+                        if (req.body.common == 'yes') {
+                            var sta = data[0].Start; var ref = data[0].Ref;
+                            var r = [];
+                            r.push(data[0]);
+                            var S = [];
+                            S.push(data[0].Subject);
+                            for (i = 1; i < data.length; i++) {
+                                if (data[i].Start == sta && data[i].Ref == ref)
+                                    S.push(data[i].Subject);
+                                else {
+                                    r[r.length - 1].Subject = S;
+                                    r.push(data[i]);
+                                    S = [];
+                                    S.push(data[i].Subject);
+                                    sta = data[i].Start;
+                                    ref = data[i].Ref;
+                                }
+                            }
+                            r[r.length - 1].Subject = S;
+                            req.session.type = 'S'
+                            req.session.query = query;
+                            req.session.func = func;
+                            req.session.ExFunc = ExFunc;
+                            req.session.subjects = subjects;
+                            req.session.limit = limit;
+                            res.render('variation', { common: r, pages: limit, page: 1 });
 
-                db.numPagesSubj(req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (limit) {
-                    db.subjects(req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, 0, function (data, query, func, ExFunc, subjects) {
-                        req.session.type = 'S'
-                        req.session.query = query;
-                        req.session.func = func;
-                        req.session.ExFunc = ExFunc;
-                        req.session.subjects = subjects;
-                        req.session.limit = limit;
-                        res.render('variation', { result: data, pages: limit, page: 1 });
+
+                        } else {
+                            req.session.type = 'S'
+                            req.session.query = query;
+                            req.session.func = func;
+                            req.session.ExFunc = ExFunc;
+                            req.session.subjects = subjects;
+                            req.session.limit = limit;
+                            res.render('variation', { result: data, pages: limit, page: 1 });
+                        }
                     });
                 });
                 break;
             case 'F':
-                if (req.body.common == 'yes')
-                    common = ' and Start in (select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) group by Start having count(distinct(Subject)) > 1)';
-                else if (req.body.common == 'no')
-                    common = ' and Start not in (select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) group by Start having count(distinct(Subject)) > 1)';
+                commonp = '';
+                var families = 0;
+                req.session.comm = 0;
+                var init = 'select count(*)/ 15 as num ';
+                if (req.body.common == 'yes') {
+                    common = ' and Start in (select * from(select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
+                    pagination = '';
+                    commonp = ' group by Start having count(distinct(Subject)) > 1) as t';
+                    families = req.body.family;
+                    req.session.comm = 1;
+                    init = 'select count(*)/ 15 as num from(select Start ';
+                } else if (req.body.common == 'no') {
+                    commonp = common = ' and Start not in (select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) group by Start having count(distinct(Subject)) > 1)';
+                    families = req.body.family;
+                    req.session.comm = 2;
+                }
 
-
-                db.numPagesFam(req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, function (limit) {
-                    db.families(req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, 0, function (data, query, func, ExFunc, families) {
-                        req.session.type = 'F'
-                        req.session.query = query;
-                        req.session.func = func;
-                        req.session.ExFunc = ExFunc;
-                        req.session.subjects = families;
-                        req.session.limit = limit;
-                        res.render('variation', { result: data, pages: limit, page: 1 });
+                db.numPagesFam(init, req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit) {
+                    db.families(req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, 0, families, function (data, query, func, ExFunc, families) {
+                        if (req.body.common == 'yes') {
+                            var sta = data[0].Start; var ref = data[0].Ref;
+                            var r = [];
+                            r.push(data[0]);
+                            var S = [];
+                            S.push(data[0].Subject);
+                            for (i = 1; i < data.length; i++) {
+                                if (data[i].Start == sta && data[i].Ref == ref)
+                                    S.push(data[i].Subject);
+                                else {
+                                    r[r.length - 1].Subject = S;
+                                    r.push(data[i]);
+                                    S = [];
+                                    S.push(data[i].Subject);
+                                    sta = data[i].Start;
+                                    ref = data[i].Ref;
+                                }
+                            }
+                            r[r.length - 1].Subject = S;
+                            req.session.type = 'F'
+                            req.session.query = query;
+                            req.session.func = func;
+                            req.session.ExFunc = ExFunc;
+                            req.session.subjects = families;
+                            req.session.limit = limit;
+                            res.render('variation', { common: r, pages: limit, page: 1 });
+                        } else {
+                            req.session.type = 'F'
+                            req.session.query = query;
+                            req.session.func = func;
+                            req.session.ExFunc = ExFunc;
+                            req.session.subjects = families;
+                            req.session.limit = limit;
+                            res.render('variation', { result: data, pages: limit, page: 1 });
+                        }
                     });
                 });
                 break;

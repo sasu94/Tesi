@@ -73,6 +73,7 @@
                         <th>Age</th>
                         <th>Age of Onset</th>
                         <th>Genetic Status</th>
+                        <th class="shortColumn">Edit</th>
                         <th class="shortColumn">Delete</th>
                     </tr>
                 </thead>
@@ -89,6 +90,7 @@
                         <td>{{this.Age}}</td>
                         <td>{{this.AgeOfOnset}}</td>
                         <td>{{this.GeneticStatus}}</td>
+                        <td><a href="/subjects?edit={{this.Id}}"><span class="glyphicon glyphicon-edit"></span></a></td>
                         <td><a class="removeSub" href="#" on="{{this.Id}}"><span class="glyphicon glyphicon-remove"></span></a></td>
                     </tr>
                     {{/each}}

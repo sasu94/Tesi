@@ -108,6 +108,9 @@
     <Content Include="views\search.handlebars">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="views\subjectEdit.handlebars">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="views\subjects.handlebars">
       <SubType>Code</SubType>
     </Content>

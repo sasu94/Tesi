@@ -6,6 +6,7 @@
     height: 400px;
     overflow-y: auto;
     width: 500px;
+    padding-left:25px;
 }
 
 ul.nav-wizard {

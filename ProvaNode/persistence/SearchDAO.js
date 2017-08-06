@@ -2,30 +2,31 @@
 
 
 module.exports = {
-    allSubject: function (func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common,limit, cb) {
+    allSubject: function (func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, page, cb) {
         connection.getConnection(function (err, conn) {
-            var query='select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order;
-            conn.query('select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order+' limit 0,15', [func, exFunc], function (error, results) {
+            var query = 'select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination;
+            conn.query('select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination, [func, exFunc, page], function (error, results) {
                 conn.release()
                 if (error) throw error
-                cb(results,query,func,exFunc);
+                cb(results, query, func, exFunc);
             });
         })
     },
-    subjects: function (subject, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common,limit, cb) {
+    subjects: function (subject, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, page, subject2, cb) {
         connection.getConnection(function (err, conn) {
-            var query = 'select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + ' and subject in (?)' + common + order;
-            conn.query('select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + ' and subject in (?)' + common + order + ' limit 0,15' , [func, exFunc, subject,subject], function (error, results) {
+            var query = 'select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + ' and subject in (?)' + common + order + pagination;
+            console.log(query);
+            conn.query('select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + ' and subject in (?)' + common + order + pagination, [func, exFunc, subject, subject2, page], function (error, results) {
                 conn.release()
                 if (error) throw error
-                cb(results, query, func, exFunc,subject);
+                cb(results, query, func, exFunc, subject);
             });
         })
     },
-    families: function (families, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, limit,cb) {
+    families: function (families, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, page, families2, cb) {
         connection.getConnection(function (err, conn) {
-            var query = 'select * from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) ' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order;
-            conn.query('select * from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) ' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order+' limit 0,15', [families, func, exFunc,families], function (error, results) {
+            var query = 'select * from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) ' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination;
+            conn.query('select * from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) ' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination, [families, func, exFunc, families2, page], function (error, results) {
                 conn.release()
                 if (error) throw error
                 cb(results, query, func, exFunc, families);
@@ -41,18 +42,18 @@ module.exports = {
             });
         })
     },
-    numPagesAll: function (func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, cb) {
+    numPagesAll: function (init, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, cb) {
         connection.getConnection(function (err, conn) {
-            conn.query('select count(*)/ 15 as num from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common, [func, exFunc], function (error, results) {
+            conn.query(init + 'from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common, [func, exFunc], function (error, results) {
                 conn.release()
                 if (error) throw error
                 cb(Math.ceil(results[0]['num']));
             });
         })
     },
-    numPagesSubj: function (subject, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, cb) {
+    numPagesSubj: function (init, subject, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, cb) {
         connection.getConnection(function (err, conn) {
-            conn.query('select count(*)/15 as num from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + ' and subject in (?)' + common, [func, exFunc, subject, subject], function (error, results) {
+            conn.query(init + 'from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + ' and subject in (?)' + common, [func, exFunc, subject, subject], function (error, results) {
                 conn.release()
                 if (error) throw error
                 console.log(results);
@@ -60,9 +61,10 @@ module.exports = {
             });
         })
     },
-    numPagesFam: function (families, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, cb) {
+    numPagesFam: function (init, families, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, cb) {
         connection.getConnection(function (err, conn) {
-            conn.query('select count(*)/15 as num from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common, [families, func, exFunc,families], function (error, results) {
+            console.log(init + 'from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common);
+            conn.query(init + 'from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common, [families, func, exFunc, families], function (error, results) {
                 conn.release()
                 if (error) throw error
                 cb(Math.ceil(results[0]['num']));
@@ -79,9 +81,9 @@ module.exports = {
         })
     },
 
-    AllSubjectsPaginated: function (query, func, ExFunc, page,cb) {
+    AllSubjectsPaginated: function (query, func, ExFunc, page, cb) {
         connection.getConnection(function (err, conn) {
-            conn.query(query + ' limit ' + 15 * (page - 1) + ' ,15', [func, ExFunc], function (error, results) {
+            conn.query(query, [func, ExFunc, page], function (error, results) {
                 console.log(query + '\n' + func + '\n' + ExFunc + '\n' + page);
                 conn.release()
                 if (error) throw error
@@ -90,9 +92,9 @@ module.exports = {
         })
     },
 
-    SubjectsPaginated: function (query, func, ExFunc, subjects,page, cb) {
+    SubjectsPaginated: function (query, func, ExFunc, subjects, subjects2, page, cb) {
         connection.getConnection(function (err, conn) {
-            conn.query(query + ' limit ' + 15 * (page - 1) + ' ,15', [func, ExFunc, subjects, subjects], function (error, results) {
+            conn.query(query, [func, ExFunc, subjects, subjects2, page], function (error, results) {
                 console.log(query + '\n' + func + '\n' + ExFunc + '\n' + page);
                 conn.release()
                 if (error) throw error
@@ -101,9 +103,9 @@ module.exports = {
         })
     },
 
-    FamiliesPaginated: function (query, func, ExFunc, families, page, cb) {
+    FamiliesPaginated: function (query, func, ExFunc, families, families2, page, cb) {
         connection.getConnection(function (err, conn) {
-            conn.query(query + ' limit ' + 15 * (page - 1) + ' ,15', [families,func, ExFunc, families], function (error, results) {
+            conn.query(query, [families, func, ExFunc, families2, page], function (error, results) {
                 console.log(query + '\n' + func + '\n' + ExFunc + '\n' + page);
                 conn.release()
                 if (error) throw error

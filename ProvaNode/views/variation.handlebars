@@ -7,8 +7,175 @@
         <h1>Search</h1>
     </div>
     {{#unless result}}
-        <h1>There is no variation for your criteria</h1>
-
+        {{#unless common}}
+            <h1>There is no variation for your criteria</h1>
+    {{else}}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Chr</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Ref</th>
+                            <th>Alt</th>
+                            <th>Func.refgene</th>
+                            <th>Gene.refgene</th>
+                            <th>Gene.Detail.refgene</th>
+                            <th>ExonicFunc.refgene</th>
+                            <th>AAChange.refgene</th>
+                            <th>1000G_ALL</th>
+                            <th>1000G_AFR</th>
+                            <th>1000G_AMR</th>
+                            <th>1000G_EAS</th>
+                            <th>1000G_EUR</th>
+                            <th>1000G_SAS</th>
+                            <th>ExAC_Freq</th>
+                            <th>ExAC_AFR</th>
+                            <th>ExAC_AMR</th>
+                            <th>ExAC_EAS</th>
+                            <th>ExAC_FIN</th>
+                            <th>ExAC_NFE</th>
+                            <th>ExAC_OTH</th>
+                            <th>ExAC_SAS</th>
+                            <th>ESP6500si_ALL</th>
+                            <th>ESP6500si_AA</th>
+                            <th>ESP6500si_EA</th>
+                            <th>CG46</th>
+                            <th>NCI60</th>
+                            <th>dbSNP</th>
+                            <th>COSMIC_ID</th>
+                            <th>COSMIC_DIS</th>
+                            <th>ClinVar_SIG</th>
+                            <th>ClinVar_DIS</th>
+                            <th>ClinVar_STATUS</th>
+                            <th>ClinVar_ID</th>
+                            <th>ClinVar_DB</th>
+                            <th>ClinVar_DBID</th>
+                            <th>GWAS_DIS</th>
+                            <th>GWAS_OR</th>
+                            <th>GWAS_BETA</th>
+                            <th>GWAS_PUBMED</th>
+                            <th>GWAS_SNP</th>
+                            <th>GWAS_P</th>
+                            <th>SIFT_score</th>
+                            <th>SIFT_pred</th>
+                            <th>Polyphen2_HDIV_score</th>
+                            <th>Polyphen2_HDIV_pred</th>
+                            <th>Polyphen2_HVAR_score</th>
+                            <th>Polyphen2_HVAR_pred</th>
+                            <th>LRT_score</th>
+                            <th>LRT_pred</th>
+                            <th>MutationTaster_score</th>
+                            <th>MutationTaster_pred</th>
+                            <th>MutationAssessor_score</th>
+                            <th>MutationAssessor_pred</th>
+                            <th>FATHMM_score</th>
+                            <th>FATHMM_pred</th>
+                            <th>RadialSVM_score</th>
+                            <th>RadialSVM_pred</th>
+                            <th>LR_score</th>
+                            <th>LR_pred</th>
+                            <th>VEST3_score</th>
+                            <th>CADD_raw</th>
+                            <th>CADD_phred</th>
+                            <th>GERP++_RS</th>
+                            <th>phyloP46way_placental</th>
+                            <th>phyloP100way_vertebrate</th>
+                            <th>SiPhy_29way_logOdds</th>
+                            <th>Status</th>
+                            <th>Qual</th>
+                            <th>Depth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each common}}
+                    <tr title="{{this.Subject}}">
+                        <td>{{this.Chr}}</td>
+                        <td>{{this.Start}}</td>
+                        <td>{{this.End}}</td>
+                        <td>{{this.Ref}}</td>
+                        <td>{{this.Alt}}</td>
+                        <td>{{this.[Func.refgene]}}</td>
+                        <td>{{this.[Gene.refgene]}}</td>
+                        <td>{{this.[Gene.Detail.refgene]}}</td>
+                        <td>{{this.[ExonicFunc.refgene]}}</td>
+                        <td>{{this.[AAChange.refgene]}}</td>
+                        <td>{{this.1000G_ALL}}</td>
+                        <td>{{this.1000G_AFR}}</td>
+                        <td>{{this.1000G_AMR}}</td>
+                        <td>{{this.1000G_EAS}}</td>
+                        <td>{{this.1000G_EUR}}</td>
+                        <td>{{this.1000G_SAS}}</td>
+                        <td>{{this.ExAC_Freq}}</td>
+                        <td>{{this.ExAC_AFR}}</td>
+                        <td>{{this.ExAC_AMR}}</td>
+                        <td>{{this.ExAC_EAS}}</td>
+                        <td>{{this.ExAC_FIN}}</td>
+                        <td>{{this.ExAC_NFE}}</td>
+                        <td>{{this.ExAC_OTH}}</td>
+                        <td>{{this.ExAC_SAS}}</td>
+                        <td>{{this.ESP6500si_ALL}}</td>
+                        <td>{{this.ESP6500si_AA}}</td>
+                        <td>{{this.ESP6500si_EA}}</td>
+                        <td>{{this.CG46}}</td>
+                        <td>{{this.NCI60}}</td>
+                        <td>{{this.dbSNP}}</td>
+                        <td>{{this.COSMIC_ID}}</td>
+                        <td>{{this.COSMIC_DIS}}</td>
+                        <td>{{this.ClinVar_SIG}}</td>
+                        <td>{{this.ClinVar_DIS}}</td>
+                        <td>{{this.ClinVar_STATUS}}</td>
+                        <td>{{this.ClinVar_ID}}</td>
+                        <td>{{this.ClinVar_DB}}</td>
+                        <td>{{this.ClinVar_DBID}}</td>
+                        <td>{{this.GWAS_DIS}}</td>
+                        <td>{{this.GWAS_OR}}</td>
+                        <td>{{this.GWAS_BETA}}</td>
+                        <td>{{this.GWAS_PUBMED}}</td>
+                        <td>{{this.GWAS_SNP}}</td>
+                        <td>{{this.GWAS_P}}</td>
+                        <td>{{this.SIFT_score}}</td>
+                        <td>{{this.SIFT_pred}}</td>
+                        <td>{{this.Polyphen2_HDIV_score}}</td>
+                        <td>{{this.Polyphen2_HDIV_pred}}</td>
+                        <td>{{this.Polyphen2_HVAR_score}}</td>
+                        <td>{{this.Polyphen2_HVAR_pred}}</td>
+                        <td>{{this.LRT_score}}</td>
+                        <td>{{this.LRT_pred}}</td>
+                        <td>{{this.MutationTaster_score}}</td>
+                        <td>{{this.MutationTaster_pred}}</td>
+                        <td>{{this.MutationAssessor_score}}</td>
+                        <td>{{this.MutationAssessor_pred}}</td>
+                        <td>{{this.FATHMM_score}}</td>
+                        <td>{{this.FATHMM_pred}}</td>
+                        <td>{{this.RadialSVM_score}}</td>
+                        <td>{{this.RadialSVM_pred}}</td>
+                        <td>{{this.LR_score}}</td>
+                        <td>{{this.LR_pred}}</td>
+                        <td>{{this.VEST3_score}}</td>
+                        <td>{{this.CADD_raw}}</td>
+                        <td>{{this.CADD_phred}}</td>
+                        <td>{{this.[GERP++_RS]}}</td>
+                        <td>{{this.phyloP46way_placental}}</td>
+                        <td>{{this.phyloP100way_vertebrate}}</td>
+                        <td>{{this.SiPhy_29way_logOdds}}</td>
+                        <td>{{this.Status}}</td>
+                        <td>{{this.Qual}}</td>
+                        <td>{{this.Depth}}</td>
+                    </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+    <div class="text-center">
+        <a class="previous" href="?page=">Previous</a>
+        <input type="text" class="shortField" value="{{page}}" />
+        of {{pages}}
+        <a class="next" href="?page=">Next</a>
+        <input type="hidden" id="maxPages" value="{{pages}}" />
+    </div>
+    {{/unless}}
     {{else}}
     <div class="table-responsive">
         <table class="table">
@@ -175,7 +342,7 @@
         <input type="text" class="shortField" value="{{page}}" />
         of {{pages}}
         <a class="next" href="?page=">Next</a>
-        <input type="hidden" id="maxPages" value="{{pages}}"/>
+        <input type="hidden" id="maxPages" value="{{pages}}" />
     </div>
 
     {{/unless}}

@@ -1,0 +1,191 @@
+﻿{{#section 'head'}}
+<script>
+
+
+</script>
+
+
+{{/section}}
+
+<section>
+    <div class="page-header">
+        <h1>Edit a Subject</h1>
+    </div>
+    <form class="form-horizontal" id="formSub" action="/subjects?action=edit" method="post" role="form">
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="name">Name</label>
+            <div class="col-lg-4">
+                <input id="Id" readonly="readonly" name="Id" type="text" class="form-control" value="{{subject.Id}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="protocolNumber">Protocol Number</label>
+            <div class="col-lg-4">
+                <input id="protocolNumber" name="ProtocolNumber" type="text" class="form-control" value="{{subject.ProtocolNumber}}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Status</label>
+            <div class="col-lg-4">
+                {{#unless subject.Status}}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="Status" value="" checked>Unknown</label>
+                    </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Affected">Affected</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Not Affected">Not Affected</label>
+                </div>
+                {{else}}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="Status" value="">Unknown</label>
+                    </div>
+                {{#if_eq subject.Status "Affected"}}
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Affected" checked>Affected</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Not Affected">Not Affected</label>
+                </div>
+                {{else}}
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Affected">Affected</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Status" value="Not Affected" checked>Not Affected</label>
+                </div>
+                {{/if_eq}}
+                {{/unless}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="GeneticStatus">Genetic Status</label>
+            <div class="col-lg-4">
+                {{#unless subject.GeneticStatus}}
+                    <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="" checked>Unknown</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="Familiar">Familiar</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="Sporadic">Sporadic</label>
+                </div>
+                {{else}}
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="Status" value="">Unknown</label>
+                    </div>
+                {{#if_eq subject.GeneticStatus "Familiar"}}
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="Familiar" checked>Familiar</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="Sporadic" >Sporadic</label>
+                </div>
+                {{else}}
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="Familiar">Familiar</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="GeneticStatus" value="Sporadic" checked>Sporadic</label>
+                </div>
+                {{/if_eq}}
+                {{/unless}}
+
+                
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Sex</label>
+            <div class="col-lg-4">
+                {{#unless subject.Sex}}
+                    <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="" checked>Unknown</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="M">M</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="F">F</label>
+                </div>
+                {{else}}
+                    <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="">Unknown</label>
+                </div>
+                {{#if_eq subject.Sex "M"}}
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="M" checked>M</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="F">F</label>
+                </div>
+                {{else}}
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="M">M</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="Sex" value="F" checked>F</label>
+                </div>
+                {{/if_eq}}
+                {{/unless}}
+
+                
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Age</label>
+            <div class="col-lg-4">
+                <input id="age" name="Age" type="text" class="form-control" value="{{subject.Age}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="status">Age of Onset</label>
+            <div class="col-lg-4">
+                <input id="ageOfOnset" name="AgeOfOnset" type="text" class="form-control" value="{{subject.AgeOfOnset}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <button type="submit" id="newSubject" class="btn btn-default">Edit</button>
+                </div>
+            </div>
+        </div>
+        {{#if flash}}
+           <div class="alert alert-dismissible alert-success">
+               <button type="button" class="close"
+                   data-dismiss="alert" aria-hidden="true">
+                   &times;
+               </button>
+               {{{flash.message}}}
+           </div>
+        {{/if}}
+    </form>
+
+</section>
