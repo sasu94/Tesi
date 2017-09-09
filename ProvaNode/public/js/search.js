@@ -100,6 +100,21 @@
         }
     });
 
+    $('.go').click(function (e) {
+        e.preventDefault();
+        var page = parseInt($(this).prev().prev().val())
+        if (isNaN(page))
+            alert('please insert a valid number');
+        else if (page > 0 && page <= $('#maxPages').val())
+            window.location.href = $(this).attr('href') +page;
+        else {
+            if ($('#maxPages').val() == 1)
+                alert('There is only one page');
+            else
+            alert('The value should be cumprises between 1 and '+$('#maxPages').val());
+        }
+    });
+
 });
 
 function nextTab(elem) {

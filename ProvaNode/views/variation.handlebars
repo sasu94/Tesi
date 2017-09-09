@@ -1,6 +1,14 @@
 ﻿{{#section 'head'}}
     <title>Results</title>
 <script type="text/javascript" src="/js/search.js"></script>
+<style>
+    section {
+        margin-bottom:20px;
+    
+    }
+
+
+</style>
 {{/section}}
 <section>
     <div class="page-header">
@@ -10,8 +18,8 @@
         {{#unless common}}
             <h1>There is no variation for your criteria</h1>
     {{else}}
-            <div class="table-responsive">
-                <table class="table">
+            <div class="table-responsive pure-table pure-table-horizontal">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Chr</th>
@@ -169,16 +177,18 @@
                 </table>
             </div>
     <div class="text-center">
+        <div class="pull-left">{{total}} results</div>
         <a class="previous" href="?page=">Previous</a>
         <input type="text" class="shortField" value="{{page}}" />
         of {{pages}}
-        <a class="next" href="?page=">Next</a>
+        <a class="next" href="?page=">Next</a>   <a class="go" href="?page=">Go</a>
         <input type="hidden" id="maxPages" value="{{pages}}" />
+        <div class="pull-right"><a href="/search?action=export"><span class="glyphicon glyphicon-export"></span> Export</a> <a href="/search?action=chart"><span class="glyphicon glyphicon-stats"></span> Statistics</a></div>
     </div>
     {{/unless}}
     {{else}}
-    <div class="table-responsive">
-        <table class="table">
+    <div class="table-responsive pure-table pure-table-horizontal">
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th>Subject</th>
@@ -338,12 +348,14 @@
         </table>
     </div>
     <div class="text-center">
+        <div class="pull-left">{{total}} results</div>
         <a class="previous" href="?page=">Previous</a>
         <input type="text" class="shortField" value="{{page}}" />
         of {{pages}}
-        <a class="next" href="?page=">Next</a>
-        <input type="hidden" id="maxPages" value="{{pages}}" />
+        <a class="next" href="?page=">Next</a>   <a class="go" href="?page=">Go</a>
+        <div class="pull-right"><a href="/search?action=export"><span class="glyphicon glyphicon-export"></span> Export</a> <a href="/search?action=chart"><span class="glyphicon glyphicon-stats"></span> Statistics</a></div>
     </div>
+    <input type="hidden" id="maxPages" value="{{pages}}" />
 
     {{/unless}}
 </section>

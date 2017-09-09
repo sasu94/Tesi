@@ -85,6 +85,9 @@
     <Content Include="README.md" />
     <Content Include="views\404.handlebars" />
     <Content Include="public\css\stile.css" />
+    <Content Include="views\chart.handlebars">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="views\families.handlebars">
       <SubType>Code</SubType>
     </Content>

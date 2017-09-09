@@ -4,6 +4,7 @@ formidable = require('formidable');
 var path = require("path");
 fs = require('fs');
 var parse = require('csv-parse');
+var xls = require('json2xls');
 
 var app = express();
 
@@ -187,7 +188,7 @@ app.post('/subjects', function (req, res) {
 
         });
 
-    } else if (req.query.action=='edit') {
+    } else if (req.query.action == 'edit') {
         var db = require('./persistence/SubjectDAO');
 
         if (req.body.ProtocolNumber == '')
@@ -479,11 +480,238 @@ app.post('/profile', function (req, res) {
 app.get('/search', function (req, res) {
     if (req.session.user == undefined) {
         res.redirect(303, '/')
+    } else if (req.query.action == 'chart') {
+        var db = require('./persistence/SearchDAO');
+
+        if (req.session.type == 'A') {
+
+            var query = req.session.query.replace('limit ?,15', '').replace('select * ', '').replace('order by', ' group by `Func.refgene` order by');
+            if (!(query.indexOf('order by') > -1)) {
+                query += ' group by `Func.refgene`';
+            }
+            db.stats('select count(*) as n, `Func.refgene` as func ' + query, req.session.func, req.session.ExFunc, function (data) {
+                var funcs = []; var funcsData = []
+                for (i = 0; i < data.length; i++) {
+                    funcs.push(data[i].func);
+                    funcsData.push(data[i].n);
+
+                }
+
+                query = query.replace('group by `Func.refgene`', 'group by Subject');
+                db.stats('select count(*) as n, Subject as s ' + query, req.session.func, req.session.ExFunc, function (data) {
+                    var subs = []; var subsData = []
+                    for (i = 0; i < data.length; i++) {
+                        subs.push(data[i].s);
+                        subsData.push(data[i].n);
+
+                    }
+
+
+                    if (!(query.indexOf('order by') > -1)) {
+                        query = query.replace('group by Subject', 'group by `ExonicFunc.refgene` having `ExonicFunc.refgene` != "" order by n desc');
+                    } else {
+                        query = query.replace('group by Subject', 'group by `ExonicFunc.refgene` having `ExonicFunc.refgene` != ""');
+                        query = query.replace('order by', 'order by n desc, ');
+                    }
+                    db.stats('select count(*) as n, `ExonicFunc.refgene` as r ' + query, req.session.func, req.session.ExFunc, function (data) {
+                        var refs = []; var refsData = []
+                        for (i = 0; i < data.length; i++) {
+                            refs.push(data[i].r);
+                            refsData.push(data[i].n);
+                        }
+                        res.render('chart', { f: funcs, fData: funcsData, s: subs, sData: subsData, r: refs, rData: refsData });
+
+                    });
+
+
+
+                });
+            });
+        } else if (req.session.type == 'S') {
+            var query = req.session.query.replace('limit ?,15', '').replace('select * ', '').replace('order by', ' group by `Func.refgene` order by');
+            if (!(query.indexOf('order by') > -1)) {
+                query += ' group by `Func.refgene`';
+            }
+            db.subjectsStats('select count(*) as n, `Func.refgene` as func ' + query, req.session.func, req.session.ExFunc, req.session.subjects, function (data) {
+                var funcs = []; var funcsData = []
+                for (i = 0; i < data.length; i++) {
+                    funcs.push(data[i].func);
+                    funcsData.push(data[i].n);
+
+                }
+
+                query = query.replace('group by `Func.refgene`', 'group by Subject');
+                db.subjectsStats('select count(*) as n, Subject as s ' + query, req.session.func, req.session.ExFunc, req.session.subjects, function (data) {
+                    var subs = []; var subsData = []
+                    for (i = 0; i < data.length; i++) {
+                        subs.push(data[i].s);
+                        subsData.push(data[i].n);
+
+                    }
+
+
+                    if (!(query.indexOf('order by') > -1)) {
+                        query = query.replace('group by Subject', ' group by `ExonicFunc.refgene` having `ExonicFunc.refgene` != "" order by n desc ');
+                    } else {
+                        query = query.replace('group by Subject', ' group by `ExonicFunc.refgene` having `ExonicFunc.refgene` != "" ');
+                        query = query.replace('order by', 'order by n desc, ');
+                    }
+                    db.subjectsStats('select count(*) as n, `ExonicFunc.refgene` as r ' + query, req.session.func, req.session.ExFunc, req.session.subjects, function (data) {
+                        var refs = []; var refsData = []
+                        for (i = 0; i < data.length; i++) {
+                            refs.push(data[i].r);
+                            refsData.push(data[i].n);
+                        }
+
+                        res.render('chart', { f: funcs, fData: funcsData, s: subs, sData: subsData, r: refs, rData: refsData });
+                    });
+
+
+
+                });
+            });
+        } else {
+            var query = req.session.query.replace('limit ?,15', '').replace('select * ', '').replace('order by', ' group by `Func.refgene` order by');
+            if (!(query.indexOf('order by') > -1)) {
+                query += ' group by `Func.refgene`';
+            }
+            db.familiesStats('select count(*) as n, `Func.refgene` as func ' + query, req.session.func, req.session.ExFunc, req.session.subjects, function (data) {
+                var funcs = []; var funcsData = []
+                for (i = 0; i < data.length; i++) {
+                    funcs.push(data[i].func);
+                    funcsData.push(data[i].n);
+
+                }
+
+                query = query.replace('group by `Func.refgene`', 'group by Subject');
+                db.familiesStats('select count(*) as n, Subject as s ' + query, req.session.func, req.session.ExFunc, req.session.subjects, function (data) {
+                    var subs = []; var subsData = []
+                    for (i = 0; i < data.length; i++) {
+                        subs.push(data[i].s);
+                        subsData.push(data[i].n);
+
+                    }
+
+
+                    if (!(query.indexOf('order by') > -1)) {
+                        query = query.replace('group by Subject', ' group by `ExonicFunc.refgene` having `ExonicFunc.refgene` != "" order by n desc ');
+                    } else {
+                        query = query.replace('group by Subject', 'group by `ExonicFunc.refgene` having `ExonicFunc.refgene` != ""');
+                        query = query.replace('order by', 'order by n desc, ');
+                    }
+                    db.familiesStats('select count(*) as n, `ExonicFunc.refgene` as r ' + query, req.session.func, req.session.ExFunc, req.session.subjects, function (data) {
+                        var refs = []; var refsData = []
+                        for (i = 0; i < data.length; i++) {
+                            refs.push(data[i].r);
+                            refsData.push(data[i].n);
+                        }
+
+                        res.render('chart', { f: funcs, fData: funcsData, s: subs, sData: subsData, r: refs, rData: refsData });
+                    });
+
+
+
+                });
+            });
+        }
+    } else if (req.query.action == 'export') {
+        var db = require('./persistence/SearchDAO');
+        if (req.session.type == 'A') {
+            db.exportAll(req.session.query.replace('limit ?,15', ''), req.session.func, req.session.ExFunc, function (data) {
+                var result = [];
+                function replacer(key) {
+                    if (key.indexOf('.') > -1)
+                        key = key.replace('.', ' ');
+                };
+
+
+                for (var i = 0; i < data.length; i++) {
+                    var r = {}
+                    for (var key in data[i]) {
+                        if (key != 'Id' && key != 'Sample') {
+                            if (key.indexOf('.') > -1)
+                                r[key.replace('.', ' ')] = data[i][key];
+                            else
+                                r[key] = data[i][key];
+                        }
+
+                    }
+                    result.push(r);
+                }
+                var file = xls(result);
+                fs.writeFileSync('data.xlsx', file, 'binary');
+                res.download('data.xlsx');
+
+            });
+        } else if (req.session.type == 'S') {
+            db.exportSubjects(req.session.query.replace('limit ?,15', ''), req.session.func, req.session.ExFunc, req.session.subjects, function (data) {
+                var result = [];
+                function replacer(key) {
+                    if (key.indexOf('.') > -1)
+                        key = key.replace('.', ' ');
+                };
+
+
+                for (var i = 0; i < data.length; i++) {
+                    var r = {}
+                    for (var key in data[i]) {
+                        if (key != 'Id' && key != 'Sample') {
+                            if (key.indexOf('.') > -1)
+                                r[key.replace('.', ' ')] = data[i][key];
+                            else
+                                r[key] = data[i][key];
+                        }
+
+                    }
+                    result.push(r);
+                }
+                var file = xls(result);
+                fs.writeFileSync('data.xlsx', file, 'binary');
+                res.download('data.xlsx');
+
+            });
+        } else {
+            db.exportFamilies(req.session.query.replace('limit ?,15', ''), req.session.func, req.session.ExFunc, req.session.subjects, function (data) {
+                var result = [];
+                function replacer(key) {
+                    if (key.indexOf('.') > -1)
+                        key = key.replace('.', ' ');
+                };
+
+
+                for (var i = 0; i < data.length; i++) {
+                    var r = {}
+                    for (var key in data[i]) {
+                        if (key != 'Id' && key != 'Sample') {
+                            if (key.indexOf('.') > -1)
+                                r[key.replace('.', ' ')] = data[i][key];
+                            else
+                                r[key] = data[i][key];
+                        }
+
+                    }
+                    result.push(r);
+                }
+                var file = xls(result);
+                fs.writeFileSync('data.xlsx', file, 'binary');
+                res.download('data.xlsx');
+
+            });
+
+        }
+
+
     } else if (req.query.page != undefined) {
         var db = require('./persistence/SearchDAO');
         if (req.session.type == 'A') {
             var page = (parseInt(req.query.page) - 1) * 15;
-            db.AllSubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, page, function (data) {
+            var func2 = page;
+            if (req.session.common == 'yes') {
+                func2 = req.session.func;
+            }else if (req.session.common == 'no') {
+                func2 = req.session.func;
+            }
+            db.AllSubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, page, func2, function (data) {
                 if (req.session.comm == true) {
                     var sta = data[0].Start; var ref = data[0].Ref;
                     var r = [];
@@ -503,10 +731,10 @@ app.get('/search', function (req, res) {
                         }
                     }
                     r[r.length - 1].Subject = S;
-                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page });
+                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page, total: req.session.total });
                 } else {
 
-                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page, total: req.session.total });
                 }
 
             });
@@ -535,9 +763,9 @@ app.get('/search', function (req, res) {
                         }
                     }
                     r[r.length - 1].Subject = S;
-                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page });
+                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page, total: req.session.total });
                 } else {
-                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page, total: req.session.total });
                 }
             });
         } else {
@@ -564,9 +792,9 @@ app.get('/search', function (req, res) {
                         }
                     }
                     r[r.length - 1].Subject = S;
-                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page });
+                    res.render('variation', { common: r, pages: req.session.limit, page: req.query.page, total: req.session.total });
                 } else {
-                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page });
+                    res.render('variation', { result: data, pages: req.session.limit, page: req.query.page, total: req.session.total });
                 }
             });
 
@@ -664,46 +892,55 @@ app.post('/search', function (req, res) {
         switch (req.body.All) {
             case 'A':
                 commonp = '';
-                var init = 'select count(*)/ 15 as num ';
+                var init = 'select count(*)/ 15 as num, count(*) as tot ';
+                var func2 = 0;
+                req.session.common = req.body.common;
                 if (req.body.common == 'yes') {
-                    common = ' and Start in (Select * from(select Start from variation group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
+                    common = ' and Start in (Select * from(select Start from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
                     commonp = ' group by Start having count(distinct(Subject)) > 1) as t';
                     pagination = '';
-                    init = 'select count(*)/ 15 as num from(select * ';
+                    init = 'select count(*)/ 15 as num, count(*) as tot from(select * ';
+                    func2 = req.body.func;
                 }
                 else if (req.body.common == 'no') {
-                    commonp = common = ' and Start not in (select Start from variation group by Start having count(distinct(Subject)) > 1)';
+                    commonp = common = ' and Start not in (select Start from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1)';
+                    func2 = req.body.exFunc;
                 }
 
 
-                db.numPagesAll(init, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit) {
-                    db.allSubject(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, 0, function (data, query, func, ExFunc) {
+                db.numPagesAll(init, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit, total) {
+                    db.allSubject(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, 0, func2, function (data, query, func, ExFunc) {
                         if (req.body.common == 'yes') {
-                            var sta = data[0].Start; var ref = data[0].Ref;
-                            var r = [];
-                            r.push(data[0]);
-                            var S = [];
-                            S.push(data[0].Subject);
-                            for (i = 1; i < data.length; i++) {
-                                if (data[i].Start == sta && data[i].Ref == ref)
-                                    S.push(data[i].Subject);
-                                else {
-                                    r[r.length - 1].Subject = S;
-                                    r.push(data[i]);
-                                    S = [];
-                                    S.push(data[i].Subject);
-                                    sta = data[i].Start;
-                                    ref = data[i].Ref;
+                            console.log(data);
+                            if (data[0] != undefined) {
+                                var sta = data[0].Start; var ref = data[0].Ref;
+                                var r = [];
+                                r.push(data[0]);
+                                var S = [];
+                                S.push(data[0].Subject);
+                                for (i = 1; i < data.length; i++) {
+                                    if (data[i].Start == sta && data[i].Ref == ref)
+                                        S.push(data[i].Subject);
+                                    else {
+                                        r[r.length - 1].Subject = S;
+                                        r.push(data[i]);
+                                        S = [];
+                                        S.push(data[i].Subject);
+                                        sta = data[i].Start;
+                                        ref = data[i].Ref;
+                                    }
                                 }
+
+                                r[r.length - 1].Subject = S;
                             }
-                            r[r.length - 1].Subject = S;
                             req.session.type = 'A'
                             req.session.query = query;
                             req.session.func = func;
                             req.session.ExFunc = ExFunc;
                             req.session.limit = limit;
                             req.session.comm = true;
-                            res.render('variation', { common: r, pages: limit, page: 1 });
+                            req.session.total = total;
+                            res.render('variation', { common: r, pages: limit, page: 1, total: total });
                         } else {
                             req.session.type = 'A'
                             req.session.query = query;
@@ -711,7 +948,8 @@ app.post('/search', function (req, res) {
                             req.session.ExFunc = ExFunc;
                             req.session.limit = limit;
                             req.session.comm = false;
-                            res.render('variation', { result: data, pages: limit, page: 1 });
+                            req.session.total = total;
+                            res.render('variation', { result: data, pages: limit, page: 1, total: total });
                         }
                     });
                 });
@@ -720,48 +958,51 @@ app.post('/search', function (req, res) {
                 var subject2 = 0;
                 commonp = '';
                 req.session.comm = 0;
-                var init = 'select count(*)/ 15 as num ';
+                var init = 'select count(*)/ 15 as num, count(*) as tot  ';
                 if (req.body.common == 'yes') {
-                    common = ' and Start in (select * from(select Start from variation where Subject in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
+                    common = ' and Start in (select * from(select Start from variation where Subject in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
                     commonp = ' group by Start having count(distinct(Subject)) > 1) as t';
                     pagination = ''
                     subject2 = req.body.subjects;
                     req.session.comm = 1;
-                    var init = 'select count(*)/ 15 as num from(select * ';
+                    var init = 'select count(*)/ 15 as num, count(*) as tot  from(select * ';
                 }
                 else if (req.body.common == 'no') {
-                    commonp = common = ' and Start not in (select Start from variation where Subject in (?) group by Start having count(distinct(Subject)) > 1)';
+                    commonp = common = ' and Start not in (select Start from variation where Subject in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1)';
                     subject2 = req.body.subjects;
                     req.session.comm = 2;
                 }
-                db.numPagesSubj(init, req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit) {
+                db.numPagesSubj(init, req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit, total) {
                     db.subjects(req.body.subjects, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, 0, subject2, function (data, query, func, ExFunc, subjects) {
                         if (req.body.common == 'yes') {
-                            var sta = data[0].Start; var ref = data[0].Ref;
-                            var r = [];
-                            r.push(data[0]);
-                            var S = [];
-                            S.push(data[0].Subject);
-                            for (i = 1; i < data.length; i++) {
-                                if (data[i].Start == sta && data[i].Ref == ref)
-                                    S.push(data[i].Subject);
-                                else {
-                                    r[r.length - 1].Subject = S;
-                                    r.push(data[i]);
-                                    S = [];
-                                    S.push(data[i].Subject);
-                                    sta = data[i].Start;
-                                    ref = data[i].Ref;
+                            if (data[0] != undefined) {
+                                var sta = data[0].Start; var ref = data[0].Ref;
+                                var r = [];
+                                r.push(data[0]);
+                                var S = [];
+                                S.push(data[0].Subject);
+                                for (i = 1; i < data.length; i++) {
+                                    if (data[i].Start == sta && data[i].Ref == ref)
+                                        S.push(data[i].Subject);
+                                    else {
+                                        r[r.length - 1].Subject = S;
+                                        r.push(data[i]);
+                                        S = [];
+                                        S.push(data[i].Subject);
+                                        sta = data[i].Start;
+                                        ref = data[i].Ref;
+                                    }
                                 }
+                                r[r.length - 1].Subject = S;
                             }
-                            r[r.length - 1].Subject = S;
                             req.session.type = 'S'
                             req.session.query = query;
                             req.session.func = func;
                             req.session.ExFunc = ExFunc;
                             req.session.subjects = subjects;
                             req.session.limit = limit;
-                            res.render('variation', { common: r, pages: limit, page: 1 });
+                            req.session.total = total;
+                            res.render('variation', { common: r, pages: limit, page: 1, total: total });
 
 
                         } else {
@@ -771,7 +1012,8 @@ app.post('/search', function (req, res) {
                             req.session.ExFunc = ExFunc;
                             req.session.subjects = subjects;
                             req.session.limit = limit;
-                            res.render('variation', { result: data, pages: limit, page: 1 });
+                            req.session.total = total;
+                            res.render('variation', { result: data, pages: limit, page: 1, total: total });
                         }
                     });
                 });
@@ -780,48 +1022,52 @@ app.post('/search', function (req, res) {
                 commonp = '';
                 var families = 0;
                 req.session.comm = 0;
-                var init = 'select count(*)/ 15 as num ';
+                var init = 'select count(*)/ 15 as num, count(*) as tot  ';
                 if (req.body.common == 'yes') {
-                    common = ' and Start in (select * from(select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
+                    common = ' and Start in (select * from(select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
                     pagination = '';
                     commonp = ' group by Start having count(distinct(Subject)) > 1) as t';
                     families = req.body.family;
                     req.session.comm = 1;
-                    init = 'select count(*)/ 15 as num from(select Start ';
+                    init = 'select count(*)/ 15 as num, count(*) as tot  from(select Start ';
                 } else if (req.body.common == 'no') {
-                    commonp = common = ' and Start not in (select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) group by Start having count(distinct(Subject)) > 1)';
+                    commonp = common = ' and Start not in (select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1)';
                     families = req.body.family;
                     req.session.comm = 2;
                 }
 
-                db.numPagesFam(init, req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit) {
+                db.numPagesFam(init, req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit, total) {
                     db.families(req.body.family, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, 0, families, function (data, query, func, ExFunc, families) {
                         if (req.body.common == 'yes') {
-                            var sta = data[0].Start; var ref = data[0].Ref;
-                            var r = [];
-                            r.push(data[0]);
-                            var S = [];
-                            S.push(data[0].Subject);
-                            for (i = 1; i < data.length; i++) {
-                                if (data[i].Start == sta && data[i].Ref == ref)
-                                    S.push(data[i].Subject);
-                                else {
-                                    r[r.length - 1].Subject = S;
-                                    r.push(data[i]);
-                                    S = [];
-                                    S.push(data[i].Subject);
-                                    sta = data[i].Start;
-                                    ref = data[i].Ref;
+                            console.log(query);
+                            if (data[0] != undefined) {
+                                var sta = data[0].Start; var ref = data[0].Ref;
+                                var r = [];
+                                r.push(data[0]);
+                                var S = [];
+                                S.push(data[0].Subject);
+                                for (i = 1; i < data.length; i++) {
+                                    if (data[i].Start == sta && data[i].Ref == ref)
+                                        S.push(data[i].Subject);
+                                    else {
+                                        r[r.length - 1].Subject = S;
+                                        r.push(data[i]);
+                                        S = [];
+                                        S.push(data[i].Subject);
+                                        sta = data[i].Start;
+                                        ref = data[i].Ref;
+                                    }
                                 }
+                                r[r.length - 1].Subject = S;
                             }
-                            r[r.length - 1].Subject = S;
                             req.session.type = 'F'
                             req.session.query = query;
                             req.session.func = func;
                             req.session.ExFunc = ExFunc;
                             req.session.subjects = families;
                             req.session.limit = limit;
-                            res.render('variation', { common: r, pages: limit, page: 1 });
+                            req.session.total = total;
+                            res.render('variation', { common: r, pages: limit, page: 1, total: total });
                         } else {
                             req.session.type = 'F'
                             req.session.query = query;
@@ -829,7 +1075,8 @@ app.post('/search', function (req, res) {
                             req.session.ExFunc = ExFunc;
                             req.session.subjects = families;
                             req.session.limit = limit;
-                            res.render('variation', { result: data, pages: limit, page: 1 });
+                            req.session.total = total;
+                            res.render('variation', { result: data, pages: limit, page: 1, total: total });
                         }
                     });
                 });
