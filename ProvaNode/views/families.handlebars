@@ -14,8 +14,8 @@
         <h1>There aren't families</h1>
 
     {{else}}
-        <div class="table-responsive">
-            <table class="table">
+        <div class="table-responsive pure-table pure-table-horizontal">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -37,7 +37,7 @@
     
     {{/unless}}
 
-    <form class="form-inline" id="formFam" action="/subjects?action=newFamily" method="post" role="form">
+    <form class="form-inline" id="formFam" action="/subjects?action=newFamily" method="post" role="form" style="margin-top:50px;">
         <div class="form-group">
             <label class="col-lg-6 control-label" for="name">New Family</label>
             <div class="col-lg-6">
@@ -61,8 +61,8 @@
         <h1>There aren't families</h1>
 
     {{else}}
-        <div class="table-responsive">
-            <table class="table">
+        <div class="table-responsive pure-table pure-table-horizontal">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>PED</th>
@@ -100,7 +100,7 @@
     
     {{/unless}}
 
-    <form class="form-horizontal" id="formSub" enctype="multipart/form-data" action="/subjects?action=newSporadic" method="post" role="form">
+    <form class="form-horizontal" id="formSub" enctype="multipart/form-data" action="/subjects?action=newSporadic" method="post" role="form" style="margin-top:50px;">
         <div class="form-group">
             <h3 class="col-lg-offset-2">New  sporadic subject</h3>
         </div>

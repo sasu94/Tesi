@@ -1,6 +1,11 @@
 ﻿{{#section 'head'}}
     <title>Your Projects</title>
 <script type="text/javascript" src="/js/samples.js"></script>
+<style>
+    body {
+    margin-bottom:200px;
+    }
+</style>
 {{/section}}
 
 <section>
@@ -11,8 +16,8 @@
     {{#unless samples}}
     <h1>There aren't samples for this project</h1>
     {{else}}
-    <div class="table-responsive">
-        <table class="table">
+    <div class="table-responsive pure-table pure-table-horizontal">
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th class="shortColumn"></th>

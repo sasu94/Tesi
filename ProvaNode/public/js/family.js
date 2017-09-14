@@ -80,7 +80,7 @@
  
     $('a[data-toggle="tooltip"]').tooltip({
         animated: 'fade',
-        placement: 'bottom',
+        placement: 'right',
         html: true
     });
 

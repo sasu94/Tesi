@@ -24,15 +24,34 @@
 
     });
 
+    $('select[name=common]').change(function () {
+        if ($(this).val() != '')
+            $('select[name=Order]').attr('disabled', true);
+        else
+            $('select[name=Order]').attr('disabled', false);
+
+    });
+
+    $('form').on('submit', function (e) {
+        e.preventDefault();
+        $('select[name=Order]').attr('disabled', false);
+        this.submit();
+        if ($('select[name=common]').val() != '')
+            $('select[name=Order]').attr('disabled', true);
+        else
+            $('select[name=Order]').attr('disabled', false);
+    });
+
+
     $('input[name=All]').change(function () {
-        if ($(this).val() == 'A'){
+        if ($(this).val() == 'A') {
             $("input[name=subjects]").prop('disabled', true);
             $("input[name=family]").prop('disabled', true);
         }
-        else if ($(this).val() == 'F'){
+        else if ($(this).val() == 'F') {
             $("input[name=subjects]").prop('disabled', true);
             $("input[name=family]").prop('disabled', false);
-        }else{
+        } else {
             $("input[name=subjects]").prop('disabled', false);
             $("input[name=family]").prop('disabled', true);
         }
@@ -106,12 +125,12 @@
         if (isNaN(page))
             alert('please insert a valid number');
         else if (page > 0 && page <= $('#maxPages').val())
-            window.location.href = $(this).attr('href') +page;
+            window.location.href = $(this).attr('href') + page;
         else {
             if ($('#maxPages').val() == 1)
                 alert('There is only one page');
             else
-            alert('The value should be cumprises between 1 and '+$('#maxPages').val());
+                alert('The value should be cumprises between 1 and ' + $('#maxPages').val());
         }
     });
 

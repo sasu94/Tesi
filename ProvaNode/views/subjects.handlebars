@@ -14,8 +14,8 @@
         <h1>There aren't Subject for this family</h1>
 
     {{else}}
-        <div class="table-responsive">
-            <table class="table">
+        <div class="table-responsive pure-table pure-table-horizontal">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>PED</th>
@@ -33,7 +33,7 @@
                 <tbody>
                     {{#each subjects}}
                     <tr>
-                        <td><a data-toggle="tooltip" title="">
+                        <td><a data-toggle="tooltip" title="<img src='/photos/ped{{this.Id}}.jpeg' />">
                             <img class="pic" src="/photos/ped{{this.Id}}.jpeg" />
                         </a></td>
                         <td>{{this.Id}}</td>
