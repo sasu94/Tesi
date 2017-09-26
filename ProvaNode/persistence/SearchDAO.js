@@ -7,6 +7,8 @@ module.exports = {
             var query = 'select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination;
             conn.query('select * from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?)' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination, [func, exFunc, func2, exFunc, page], function (error, results) {
                 conn.release()
+                console.log(query);
+                console.log('\n' + func + '\n' + exFunc);
                 if (error) throw error
                 cb(results, query, func, exFunc);
             });
@@ -24,8 +26,8 @@ module.exports = {
     },
     families: function (families, func, exFunc, thousq, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, page, families2, cb) {
         connection.getConnection(function (err, conn) {
-            var query = 'select * from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) ' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination;
-            conn.query('select * from variation v inner join subject s on v.Subject=s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) ' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination, [families, func, exFunc, families2, func, exFunc, page], function (error, results) {
+            var query = 'select * from variation v inner join (select id,family from subject where family in (?)) s on v.Subject=s.Id where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) ' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination;
+            conn.query('select * from variation v inner join (select id,family from subject where family in (?)) s on v.Subject=s.Id where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) ' + thousq + thousAfr + thousE + exacf + exaca + exacn + espa + cg46 + cosmic + clindis + clinid + clindb + gwasdis + gwasor + chr + start + end + gene + common + order + pagination, [families, func, exFunc, families2, func, exFunc, page], function (error, results) {
                 conn.release()
                 if (error) throw error
                 cb(results, query, func, exFunc, families);

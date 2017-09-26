@@ -390,9 +390,18 @@ app.post('/subjects', function (req, res) {
             res.json(families);
         });
     } else if (req.body.removeSub != undefined) {
+        var db2 = require('./persistence/SampleDAO');
         var db = require('./persistence/SubjectDAO');
         db.removeSubject(req.body.removeSub, function (data) {
-            res.json(data);
+            db2.idBySubject(req.body.removeSub, function (id) {
+                console.log(id);
+                fs.unlinkSync(__dirname + '/uploads/files/' + id[0].id + '.csv');
+                fs.unlinkSync(__dirname + '/uploads/photos/' + id[0].id + '.jpeg');
+                fs.unlinkSync(__dirname + '/uploads/photos/ped' + req.body.removeSub + '.jpeg');
+                db2.removeSampleByName(req.body.removeSub);
+
+                res.json(data);
+            })
         });
     } else if (req.body.removeFam != undefined) {
         var db = require('./persistence/SubjectDAO');
@@ -418,17 +427,29 @@ app.get('/projects', function (req, res) {
 app.post('/projects', function (req, res) {
     var db = require('./persistence/SampleDAO');
     if (req.body.removeProj != undefined) {
-        console.log(req.body.removeProj);
         db.samplesByProject(req.body.removeProj, function (samples) {
-            samples.forEach(function (item) {
-                db.removeSubjectsBySample(item.id, function () {
-                    db.removeProject(req.body.removeProj);
-                });
-            })
+            if (samples.length > 0)
+                samples.forEach(function (item) {
+                    fs.unlinkSync(__dirname + '/uploads/photos/' + item.id + '.jpeg');
+                    fs.unlinkSync(__dirname + '/uploads/files/' + item.id + '.csv');
+                    db.nameByProject(item.id, function (name) {
+                        fs.unlinkSync(__dirname + '/uploads/photos/ped' + name[0].name + '.jpeg');
+                        db.removeSubjectsBySample(item.id, function () {
+                            db.removeProject(req.body.removeProj);
+                        });
+                    })
+                })
+            else
+                db.removeProject(req.body.removeProj);
         });
     } else if (req.body.removeSample != undefined) {
         db.removeSubjectsBySample(req.body.removeSample, function (data) {
-            db.removeSample(req.body.removeSample);
+            fs.unlinkSync(__dirname + '/uploads/photos/' + req.body.removeSample + '.jpeg');
+            fs.unlinkSync(__dirname + '/uploads/files/' + req.body.removeSample + '.csv');
+            db.nameByProject(req.body.removeSample, function (data) {
+                fs.unlinkSync(__dirname + '/uploads/photos/ped' + data[0].name + '.jpeg');
+                db.removeSample(req.body.removeSample);
+            })
         });
     }
 });
@@ -708,7 +729,7 @@ app.get('/search', function (req, res) {
             var func2 = page;
             if (req.session.common == 'yes') {
                 func2 = req.session.func;
-            }else if (req.session.common == 'no') {
+            } else if (req.session.common == 'no') {
                 func2 = req.session.func;
             }
             db.AllSubjectsPaginated(req.session.query, req.session.func, req.session.ExFunc, page, func2, function (data) {
@@ -904,9 +925,8 @@ app.post('/search', function (req, res) {
                 }
                 else if (req.body.common == 'no') {
                     commonp = common = ' and Start not in (select Start from variation where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1)';
-                    func2 = req.body.exFunc;
+                    func2 = req.body.func;
                 }
-
 
                 db.numPagesAll(init, req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, commonp, function (limit, total) {
                     db.allSubject(req.body.func, req.body.exFunc, thousA, thousAfr, thousE, exacf, exaca, exacn, espa, cg46, cosmic, clindis, clinid, clindb, gwasdis, gwasor, chr, start, end, gene, order, common, pagination, 0, func2, function (data, query, func, ExFunc) {
@@ -1024,14 +1044,14 @@ app.post('/search', function (req, res) {
                 req.session.comm = 0;
                 var init = 'select count(*)/ 15 as num, count(*) as tot  ';
                 if (req.body.common == 'yes') {
-                    common = ' and Start in (select * from(select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
+                    common = ' and Start in (select * from(select Start from variation v inner join (select id,family from subject where family in (?)) s on v.Subject = s.Id where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1 limit ?,15) as t)';
                     pagination = '';
                     commonp = ' group by Start having count(distinct(Subject)) > 1) as t';
                     families = req.body.family;
                     req.session.comm = 1;
                     init = 'select count(*)/ 15 as num, count(*) as tot  from(select Start ';
                 } else if (req.body.common == 'no') {
-                    commonp = common = ' and Start not in (select Start from variation v inner join subject s on v.Subject = s.Id where s.family in (?) and `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1)';
+                    commonp = common = ' and Start not in (select Start from variation v inner join (select id,family from subject where family in (?)) s on v.Subject = s.Id where `Func.refgene` in (?) and `ExonicFunc.refgene` in (?) group by Start having count(distinct(Subject)) > 1)';
                     families = req.body.family;
                     req.session.comm = 2;
                 }

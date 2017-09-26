@@ -79,6 +79,26 @@ module.exports = {
 
 
     },
+    nameByProject: function (id, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('select name from sample where id=?', [id], function (error, results) {
+                conn.release();
+                if (error) throw error;
+                cb(results);
+            });
+        })
+    },
+
+    idBySubject: function (name, cb) {
+        connection.getConnection(function (err, conn) {
+            conn.query('select id from sample where name=?', [name], function (error, results) {
+                conn.release();
+                if (error) throw error;
+                cb(results);
+            });
+        })
+    },
+
     samplesByProject: function (project, cb) {
         connection.getConnection(function (err, conn) {
             conn.query('select id from sample where project=?', [project], function (error, results) {
@@ -91,6 +111,15 @@ module.exports = {
     removeSample: function (id) {
         connection.getConnection(function (err, conn) {
             conn.query('delete from sample where id in (?)', [id], function (error, results) {
+                conn.release();
+                if (error) throw error;
+            });
+        });
+
+    },
+     removeSampleByName: function (name) {
+        connection.getConnection(function (err, conn) {
+            conn.query('delete from sample where name in (?)', [name], function (error, results) {
                 conn.release();
                 if (error) throw error;
             });
